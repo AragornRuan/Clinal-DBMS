@@ -70,7 +70,14 @@ public class PatientsResource {
 	
 	@POST
 	@Path("/update")
-	public
+	public int update(@QueryParam("oldadnum") String oldadnum, @NotNull @Valid Patients patients) {
+		try {
+			patientsDAO.update(oldadnum, patients);
+			return 0;
+		} catch (Exception exception) {
+			return -1;
+		}
+	}
 
 
 }
