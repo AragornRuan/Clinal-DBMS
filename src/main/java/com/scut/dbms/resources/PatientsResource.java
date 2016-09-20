@@ -2,6 +2,8 @@ package com.scut.dbms.resources;
 
 import com.scut.dbms.core.Patients;
 import com.scut.dbms.db.PatientsDAO;
+import com.scut.dbms.api.ResponseMessage;
+import com.scut.dbms.error.ErrorCode;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -9,13 +11,11 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import java.util.List;
-import java.util.zip.CheckedOutputStream;
 
 @Path("/patients")
 @Produces(MediaType.APPLICATION_JSON)
@@ -58,26 +58,26 @@ public class PatientsResource {
 	 */
 	@POST
 	@Path("/insert")
-	public int insert(@NotNull @Valid Patients patients) {
+	public ResponseMessage insert(@NotNull @Valid Patients patients) {
 		try {
 			patientsDAO.insert(patients);
-			return 0; 
+			return new ResponseMessage(ErrorCode.SUCCESS, "Insert data into patients success."); 
 		} catch (Exception exception) {
-			return -1;
+			return new ResponseMessage(ErrorCode.INSET_DATA_ERROR, "Insert data into patients error."); 
 		}
 		
 	}
 	
 	@POST
 	@Path("/update")
-	public int update(@QueryParam("oldadnum") String oldadnum, @NotNull @Valid Patients patients) {
+	public ResponseMessage update(@QueryParam("oldadnum") String oldadnum, @NotNull @Valid Patients patients) {
 		try {
 			patientsDAO.update(oldadnum, patients);
-			return 0;
+			return new ResponseMessage(ErrorCode.SUCCESS, "Update patients according admissionnumber " + oldadnum + "success.");
 		} catch (Exception exception) {
-			return -1;
+			return new ResponseMessage(ErrorCode.UPDATE_DATA_ERROR, "Update patients according admissionnumber " + oldadnum +  "error.");
 		}
 	}
-
+	
 
 }
