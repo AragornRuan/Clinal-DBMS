@@ -9,6 +9,7 @@ import javax.persistence.Table;
 
 /**
  * 对应于数据库中的cases表
+ * 
  * @author aragorn
  *
  */
@@ -21,51 +22,92 @@ public class Cases {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
+
 	@Column(name = "patient_id", nullable = false)
 	private int patientId;
-	
+
 	@Column(name = "diagnosis")
 	private String diagnosis;
-	
+
 	@Column(name = "ecg")
 	private String ecg;
-	
+
 	@Column(name = "ecg_tag")
 	private int ecgTag;
-	
+
 	@Column(name = "ct")
 	private String ct;
-	
+
 	@Column(name = "ct_tag")
 	private int ctTag;
-	
+
 	@Column(name = "complaint")
 	private String complaint;
-	
+
 	@Column(name = "radiography")
 	private String radiography;
-	
+
 	@Column(name = "radiography_tag")
 	private int radiographyTag;
-	
+
 	@Column(name = "hos_time")
 	private String hosTime;
-	
+
 	@Column(name = "radiography_time")
 	private String radiographyTime;
-	
+
 	@Column(name = "ct_time")
 	private String ctTime;
-	
+
 	@Column(name = "discharged_time")
 	private String dischargedTime;
-	
+
 	@Column(name = "remarks")
 	private String remarks;
-	
+
 	@Column(name = "disease")
 	private int disease;
+
+	public Cases(int patientId, String diagnosis, String ecg, int ecgTag, String ct, int ctTag, String complaint,
+			String radiography, int radiographyTag, String hosTime, String radiographyTime, String ctTime,
+			String dischargedTime, String remarks, int disease) {
+		this.patientId = patientId;
+		this.diagnosis = diagnosis;
+		this.ecg = ecg;
+		this.ecgTag = ecgTag;
+		this.ct = ct;
+		this.ctTag = ctTag;
+		this.complaint = complaint;
+		this.radiography = radiography;
+		this.radiographyTag = radiographyTag;
+		this.hosTime = hosTime;
+		this.radiographyTime = radiographyTime;
+		this.ctTime = ctTime;
+		this.dischargedTime = dischargedTime;
+		this.remarks = remarks;
+		this.disease = disease;
+	}
+
+	public Cases(int id, int patientId, String diagnosis, String ecg, int ecgTag, String ct, int ctTag,
+			String complaint, String radiography, int radiographyTag, String hosTime, String radiographyTime,
+			String ctTime, String dischargedTime, String remarks, int disease) {
+		this.id = id;
+		this.patientId = patientId;
+		this.diagnosis = diagnosis;
+		this.ecg = ecg;
+		this.ecgTag = ecgTag;
+		this.ct = ct;
+		this.ctTag = ctTag;
+		this.complaint = complaint;
+		this.radiography = radiography;
+		this.radiographyTag = radiographyTag;
+		this.hosTime = hosTime;
+		this.radiographyTime = radiographyTime;
+		this.ctTime = ctTime;
+		this.dischargedTime = dischargedTime;
+		this.remarks = remarks;
+		this.disease = disease;
+	}
 
 	public int getId() {
 		return id;
@@ -194,5 +236,5 @@ public class Cases {
 	public void setDisease(int disease) {
 		this.disease = disease;
 	}
-	
+
 }
