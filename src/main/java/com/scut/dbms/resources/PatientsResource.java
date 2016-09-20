@@ -67,6 +67,10 @@ public class PatientsResource {
 		}
 		
 	}
+	
+	@POST
+	@Path("/update")
+	public
 
 
 }
