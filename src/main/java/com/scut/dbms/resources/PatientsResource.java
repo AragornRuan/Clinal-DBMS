@@ -3,7 +3,9 @@ package com.scut.dbms.resources;
 import com.scut.dbms.core.Patients;
 import com.scut.dbms.db.PatientsDAO;
 import com.scut.dbms.api.ResponseMessage;
+import com.scut.dbms.api.UpdateResponseMessage;
 import com.scut.dbms.error.ErrorCode;
+import com.scut.dbms.api.InsertResponseMessage;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -61,7 +63,8 @@ public class PatientsResource {
 	public ResponseMessage insert(@NotNull @Valid Patients patients) {
 		try {
 			patientsDAO.insert(patients);
-			return new ResponseMessage(ErrorCode.SUCCESS, "Insert data into patients success."); 
+			int id = patientsDAO.findId(patients.getAdmissionnumber());
+			return new InsertResponseMessage(id, ErrorCode.SUCCESS, "Insert data into patients success."); 
 		} catch (Exception exception) {
 			return new ResponseMessage(ErrorCode.INSET_DATA_ERROR, "Insert data into patients error."); 
 		}
@@ -73,11 +76,11 @@ public class PatientsResource {
 	public ResponseMessage update(@QueryParam("oldadnum") String oldadnum, @NotNull @Valid Patients patients) {
 		try {
 			patientsDAO.update(oldadnum, patients);
-			return new ResponseMessage(ErrorCode.SUCCESS, "Update patients according admissionnumber " + oldadnum + "success.");
+			int id = patientsDAO.findId(patients.getAdmissionnumber());
+			return new UpdateResponseMessage(id, ErrorCode.SUCCESS, "Update patients according admissionnumber" + oldadnum +  "error.");
 		} catch (Exception exception) {
 			return new ResponseMessage(ErrorCode.UPDATE_DATA_ERROR, "Update patients according admissionnumber " + oldadnum +  "error.");
 		}
 	}
-	
 
 }

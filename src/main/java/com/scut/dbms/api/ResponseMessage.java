@@ -17,7 +17,7 @@ public class ResponseMessage {
 	public ResponseMessage(int errorCode, String contents/*, int id*/) {
 		this.errorCode = errorCode;
 		this.contents = contents;
-		//this.id = id;
+//		this.id = id;
 	}
 	
 	@JsonProperty
@@ -38,7 +38,7 @@ public class ResponseMessage {
 		this.errorCode = errorCode;
 	}
 	
-	/*@JsonProperty
+/*	@JsonProperty
 	public int getId() {
 		return id;
 	}

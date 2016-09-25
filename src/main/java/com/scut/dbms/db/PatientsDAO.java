@@ -35,4 +35,6 @@ public interface PatientsDAO {
 			+ "where admissionnumber = :oldadnum")
 	void update(@Bind("oldadnum") String oldadnum, @BindBean Patients patients);
 	
+	@SqlQuery("select id from patients where admissionnumber = :admissionnumber")
+	int findId(@Bind("admissionnumber") String admissionnumber);
 }
