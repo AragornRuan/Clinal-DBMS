@@ -32,8 +32,8 @@ public class CasesResources {
 	}
 	
 	@GET
-	@Path("/patientsId")
-	public Cases findByPatientsId(@QueryParam("patientsId") int patientsId) {
+	@Path("/patientId")
+	public Cases findByPatientsId(@QueryParam("patientId") int patientsId) {
 		return casesDAO.findByPatientsId(patientsId);
 	}
 	

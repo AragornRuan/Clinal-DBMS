@@ -20,6 +20,13 @@ public class ECG {
 	
 	@Column(name = "source")
 	private String source;
+	
+	public ECG(String testId, int patientId, String ecgData, String source) {
+		this.testId = testId;
+		this.patientId = patientId;
+		this.ecgData = ecgData;
+		this.source = source;
+	}
 
 	public String getTestId() {
 		return testId;

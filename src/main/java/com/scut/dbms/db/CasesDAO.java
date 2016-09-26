@@ -13,20 +13,20 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
 @RegisterMapper(CasesMapper.class)
 public interface CasesDAO {
-	@SqlQuery("select id, patients_id, diagnosis, ecg, ecg_tag, ct, ct_tag, "
+	@SqlQuery("select id, patient_id, diagnosis, ecg, ecg_tag, ct, ct_tag, "
 			+ "complaint, radiography, radiography_tag hos_time, radiography_time, "
 			+ "ct_time, discharged_time, remarks, disease from cases where patients_id "
-			+ "= :patientsId")
-	Cases findByPatientsId(@Bind("patientsId") int patientsId);
+			+ "= :patientId")
+	Cases findByPatientsId(@Bind("patientId") int patientId);
 	
-	@SqlUpdate("insert into cases(patients_id, diagnosis, ecg, ecg_tag, ct, ct_tag, "
+	@SqlUpdate("insert into cases(patient_id, diagnosis, ecg, ecg_tag, ct, ct_tag, "
 			+ "complaint, radiography, radiography_tag hos_time, radiography_time, "
-			+ "ct_time, discharged_time, remarks, disease) values (:patientsId, :diagnosis, "
+			+ "ct_time, discharged_time, remarks, disease) values (:patientId, :diagnosis, "
 			+ ":ecg, :ecgTag, :et, :ctTag, :complaint, :radiography, :radiographyTag, :hosTime,"
 			+ ":radiographyTime, :ctTime, :dischargedTime, :remarks, :disease)")
 	void insert(@BindBean Cases cases);
 	
-	@SqlQuery("select id, patients_id, diagnosis, ecg, ecg_tag, ct, ct_tag, "
+	@SqlQuery("select id, patient_id, diagnosis, ecg, ecg_tag, ct, ct_tag, "
 			+ "complaint, radiography, radiography_tag hos_time, radiography_time, "
 			+ "ct_time, discharged_time, remarks, disease from cases")
 	List<Cases> findAll();

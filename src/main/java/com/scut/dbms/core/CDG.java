@@ -24,6 +24,14 @@ public class CDG {
 	@Column(name = "para_lya")
 	private double paraLya;
 
+	public CDG(String testId, String cdgData, String cdgResults, double paraFft, double paraLya) {
+		this.testId = testId;
+		this.cdgData = cdgData;
+		this.cdgResults = cdgResults;
+		this.paraFft = paraFft;
+		this.paraLya = paraLya;
+	}
+	
 	public String getTestId() {
 		return testId;
 	}
