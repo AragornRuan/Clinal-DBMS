@@ -25,11 +25,12 @@ public class PatientsInfoResources {
 	@GET
 	public List<PatientsInfo> queryPatientsInfo(@QueryParam("name") String name, @QueryParam("male") int male, @QueryParam("female") int female,
 			@QueryParam("admissionnumber") String addmissionnumber, @QueryParam("ecgNormal") int ecgNormal, 
-			@QueryParam("ecgUnusual") int ecgUnusual, @QueryParam("ctNormal") int ctNormal, @QueryParam("radiographyNormal") int radiographyNormal, 
+			@QueryParam("ecgUnusual") int ecgUnusual, @QueryParam("ctNormal") int ctNormal, @QueryParam("ctSricture") int ctSricture, 
+			@QueryParam("ctNothing") int ctNothing, @QueryParam("radiographyNormal") int radiographyNormal, 
 			@QueryParam("radiographyStricture") int radiographyStricture, @QueryParam("radiographyNoting") int radiographyNoting, 
 			@QueryParam("negative") int negative, @QueryParam("positive") int positive, @QueryParam("probablePositive") int probablePositive,
 			@QueryParam("times") int times, @QueryParam("mindray") int mindray, @QueryParam("aika") int aika, @QueryParam("cardis") int cardis) {
-		return patientsInfoDAO.queryPatientsInfo(name, male, female, addmissionnumber, ecgNormal, ecgUnusual, ctNormal, radiographyNormal, 
+		return patientsInfoDAO.queryPatientsInfo(name, male, female, addmissionnumber, ecgNormal, ecgUnusual, ctNormal, ctSricture, ctNothing, radiographyNormal, 
 					radiographyStricture, radiographyNoting, negative, positive, probablePositive, times, mindray, aika, cardis);
 	}
 }

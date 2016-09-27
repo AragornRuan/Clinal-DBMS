@@ -11,7 +11,7 @@ import com.scut.dbms.core.Cases;
 public class CasesMapper implements ResultSetMapper<Cases> {
 
 	public Cases map(int index, ResultSet resultSet, StatementContext statementContext) throws SQLException {
-		return new Cases(resultSet.getInt("id"), resultSet.getInt("patients_id"), resultSet.getString("diagnosis"),
+		return new Cases(resultSet.getInt("id"), resultSet.getInt("patient_id"), resultSet.getString("diagnosis"),
 				resultSet.getString("ecg"), resultSet.getInt("ecg_tag"), resultSet.getString("ct"), 
 				resultSet.getInt("ct_tag"), resultSet.getString("complaint"), resultSet.getString("radiography"),
 				resultSet.getInt("radiography_tag"), resultSet.getString("hos_time"), resultSet.getString("radiography_time"),

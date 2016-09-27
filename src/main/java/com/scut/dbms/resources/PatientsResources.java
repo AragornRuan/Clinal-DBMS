@@ -22,11 +22,11 @@ import java.util.List;
 @Path("/patients")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON+";charset=UTF-8")
-public class PatientsResource {
+public class PatientsResources {
 	
 	private final PatientsDAO patientsDAO;
 	
-	public PatientsResource(PatientsDAO patientsDAO) {
+	public PatientsResources(PatientsDAO patientsDAO) {
 		this.patientsDAO = patientsDAO;
 	}
 	
