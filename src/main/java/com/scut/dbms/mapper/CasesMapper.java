@@ -18,5 +18,4 @@ public class CasesMapper implements ResultSetMapper<Cases> {
 				resultSet.getString("ct_time"), resultSet.getString("discharged_time"), resultSet.getString("remarks"),
 				resultSet.getInt("disease"));
 	}
-
 }

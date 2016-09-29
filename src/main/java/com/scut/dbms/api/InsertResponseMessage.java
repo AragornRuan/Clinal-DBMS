@@ -6,8 +6,8 @@ public class InsertResponseMessage extends ResponseMessage {
 
 	private int id;
 	
-	public InsertResponseMessage(int id, int errorCode, String contents) {
-		super(errorCode, contents);
+	public InsertResponseMessage(int id, int code, String message) {
+		super(code, message);
 		this.id = id;
 	}
 

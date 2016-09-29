@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ResponseMessage {
 	
-	private int errorCode;
+	private int code;
 	
-	private String contents;
+	private String message;
 	
 //	private int id;
 	
@@ -14,28 +14,28 @@ public class ResponseMessage {
 		
 	}
 	
-	public ResponseMessage(int errorCode, String contents/*, int id*/) {
-		this.errorCode = errorCode;
-		this.contents = contents;
+	public ResponseMessage(int code, String message/*, int id*/) {
+		this.code = code;
+		this.message = message;
 //		this.id = id;
 	}
 	
 	@JsonProperty
-	public String getContents() {
-		return contents;
+	public String getMessage() {
+		return message;
 	}
 
-	public void setContents(String contents) {
-		this.contents = contents;
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 	@JsonProperty
-	public int getErrorCode() {
-		return errorCode;
+	public int getCode() {
+		return code;
 	}
 
-	public void setErrorCode(int errorCode) {
-		this.errorCode = errorCode;
+	public void setCode(int code) {
+		this.code = code;
 	}
 	
 /*	@JsonProperty
