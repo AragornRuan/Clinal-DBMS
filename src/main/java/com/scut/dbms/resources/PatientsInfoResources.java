@@ -29,8 +29,9 @@ public class PatientsInfoResources {
 			@QueryParam("ctNothing") int ctNothing, @QueryParam("radiographyNormal") int radiographyNormal, 
 			@QueryParam("radiographyStricture") int radiographyStricture, @QueryParam("radiographyNoting") int radiographyNoting, 
 			@QueryParam("negative") int negative, @QueryParam("positive") int positive, @QueryParam("probablePositive") int probablePositive,
-			@QueryParam("times") int times, @QueryParam("mindray") int mindray, @QueryParam("aika") int aika, @QueryParam("cardis") int cardis) {
+			@QueryParam("times") int times, @QueryParam("mindray") int mindray, @QueryParam("aika") int aika, @QueryParam("cardis") int cardis, 
+			@QueryParam("im") int im, @QueryParam("ar") int ar) {
 		return patientsInfoDAO.queryPatientsInfo(name, male, female, addmissionnumber, ecgNormal, ecgUnusual, ctNormal, ctSricture, ctNothing, radiographyNormal, 
-					radiographyStricture, radiographyNoting, negative, positive, probablePositive, times, mindray, aika, cardis);
+					radiographyStricture, radiographyNoting, negative, positive, probablePositive, times, mindray, aika, cardis, im, ar);
 	}
 }

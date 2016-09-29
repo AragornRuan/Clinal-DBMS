@@ -4,10 +4,12 @@ import org.skife.jdbi.v2.DBI;
 
 import com.scut.dbms.DBMSConfiguration;
 import com.scut.dbms.db.CDGDAO;
+import com.scut.dbms.db.CDGInfoDAO;
 import com.scut.dbms.db.CasesDAO;
 import com.scut.dbms.db.PatientsDAO;
 import com.scut.dbms.db.PatientsInfoDAO;
 import com.scut.dbms.db.ECGDAO;
+import com.scut.dbms.resources.CDGInfoResources;
 import com.scut.dbms.resources.CDGResources;
 import com.scut.dbms.resources.CasesResources;
 import com.scut.dbms.resources.PatientsInfoResources;
@@ -35,10 +37,12 @@ public class DBMSApplication extends Application<DBMSConfiguration> {
 		final PatientsInfoDAO patientsInfoDAO = jdbi.onDemand(PatientsInfoDAO.class);
 		final ECGDAO ecgDAO = jdbi.onDemand(ECGDAO.class);
 		final CDGDAO cdgDAO = jdbi.onDemand(CDGDAO.class);
+		final CDGInfoDAO cdgInfoDAO = jdbi.onDemand(CDGInfoDAO.class);
 		environment.jersey().register(new PatientsResources(patientsDAO));
 		environment.jersey().register(new CasesResources(casesDAO));
 		environment.jersey().register(new PatientsInfoResources(patientsInfoDAO));
 		environment.jersey().register(new ECGResources(ecgDAO));
 		environment.jersey().register(new CDGResources(cdgDAO));
+		environment.jersey().register(new CDGInfoResources(cdgInfoDAO));
 	}
 }

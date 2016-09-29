@@ -12,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 
 @Path("/cdg")
 @Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON+";charset=UTF-8")
 public class CDGResources {
 
 	private CDGDAO cdgDAO;
@@ -22,7 +22,7 @@ public class CDGResources {
 	}
 	
 	@GET
-	CDG findByTestId(@QueryParam("testId") String testId) {
+	public CDG findByTestId(@QueryParam("testId") String testId) {
 		return cdgDAO.findByTestId(testId);
 	}
 	
