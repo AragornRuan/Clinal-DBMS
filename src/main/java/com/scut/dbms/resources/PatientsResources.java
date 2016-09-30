@@ -61,26 +61,17 @@ public class PatientsResources {
 	@POST
 	@Path("/insert")
 	public ResponseMessage insert(@NotNull @Valid Patients patients) {
-		try {
-			patientsDAO.insert(patients);
-			int id = patientsDAO.findId(patients.getAdmissionnumber());
-			return new InsertResponseMessage(id, ErrorCode.SUCCESS, "Insert data into patients success."); 
-		} catch (Exception exception) {
-			return new ResponseMessage(ErrorCode.INSET_DATA_ERROR, "Insert data into patients error."); 
-		}
-		
+		patientsDAO.insert(patients);
+		int id = patientsDAO.findId(patients.getAdmissionnumber());
+		return new InsertResponseMessage(id, ErrorCode.SUCCESS, "Insert data into patients success."); 
 	}
 	
 	@POST
 	@Path("/update")
 	public ResponseMessage update(@QueryParam("oldadnum") String oldadnum, @NotNull @Valid Patients patients) {
-		try {
-			patientsDAO.update(oldadnum, patients);
-			int id = patientsDAO.findId(patients.getAdmissionnumber());
-			return new UpdateResponseMessage(id, ErrorCode.SUCCESS, "Update patients according admissionnumber" + oldadnum +  "error.");
-		} catch (Exception exception) {
-			return new ResponseMessage(ErrorCode.UPDATE_DATA_ERROR, "Update patients according admissionnumber " + oldadnum +  "error.");
-		}
+		patientsDAO.update(oldadnum, patients);
+		int id = patientsDAO.findId(patients.getAdmissionnumber());
+		return new UpdateResponseMessage(id, ErrorCode.SUCCESS, "Update patients according admissionnumber" + oldadnum +  "error.");
 	}
 
 }

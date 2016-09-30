@@ -22,7 +22,7 @@ public interface CasesDAO {
 	@SqlUpdate("insert into cases(patient_id, diagnosis, ecg, ecg_tag, ct, ct_tag, "
 			+ "complaint, radiography, radiography_tag, hos_time, radiography_time, "
 			+ "ct_time, discharged_time, remarks, disease) values (:patientId, :diagnosis, "
-			+ ":ecg, :ecgTag, :et, :ctTag, :complaint, :radiography, :radiographyTag, :hosTime,"
+			+ ":ecg, :ecgTag, :ct, :ctTag, :complaint, :radiography, :radiographyTag, :hosTime,"
 			+ ":radiographyTime, :ctTime, :dischargedTime, :remarks, :disease)")
 	void insert(@BindBean Cases cases);
 	
@@ -31,4 +31,10 @@ public interface CasesDAO {
 			+ "ct_time, discharged_time, remarks, disease from cases")
 	List<Cases> findAll();
 	
+	@SqlUpdate("update cases set patient_id = :patientId, diagnosis = :diagnosis, ecg = :ecg, "
+			+ "ecg_tag = :ecgTag, ct = :ct, ct_tag = :ctTag, complaint = :complaint, "
+			+ "radiography = :radiography, radiography_tag = :radiographyTag, hos_time = :hosTime, "
+			+ "radiography_time = :radiographyTime, ct_time = :ctTime, discharged_time = : dischargedTime, "
+			+ "remarks = :remarks, disease = :disease")
+	void update(@BindBean Cases cases);
 }

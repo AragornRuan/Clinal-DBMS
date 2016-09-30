@@ -40,11 +40,14 @@ public class CasesResources {
 	@POST
 	@Path("/insert")
 	public ResponseMessage insert(@NotNull @Valid Cases cases) {
-		try {
-			casesDAO.insert(cases);
-			return new ResponseMessage(ErrorCode.SUCCESS, "insert into cases success.");
-		} catch (Exception exception) {
-			return new ResponseMessage(ErrorCode.INSET_DATA_ERROR, "insert into cases error.");
-		}
+		casesDAO.insert(cases);
+		return new ResponseMessage(ErrorCode.SUCCESS, "insert into cases success.");
+	}
+	
+	@POST
+	@Path("/update")
+	public ResponseMessage update(@NotNull @Valid Cases cases) {
+		casesDAO.update(cases);
+		return new ResponseMessage(ErrorCode.SUCCESS, "update cases success.");
 	}
 }

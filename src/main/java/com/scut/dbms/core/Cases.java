@@ -68,6 +68,10 @@ public class Cases {
 	@Column(name = "disease")
 	private int disease;
 
+	public Cases() {
+		
+	}
+	
 	public Cases(int patientId, String diagnosis, String ecg, int ecgTag, String ct, int ctTag, String complaint,
 			String radiography, int radiographyTag, String hosTime, String radiographyTime, String ctTime,
 			String dischargedTime, String remarks, int disease) {
