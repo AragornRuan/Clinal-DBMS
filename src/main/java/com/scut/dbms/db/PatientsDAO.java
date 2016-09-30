@@ -32,8 +32,8 @@ public interface PatientsDAO {
 	List<Patients> findById(@Bind("min") int min, @Bind("max") int max);
 	
 	@SqlUpdate("update patients set name = :name, sex = :sex, age = :age, admissionnumber = :admissionnumber "
-			+ "where admissionnumber = :oldadnum")
-	void update(@Bind("oldadnum") String oldadnum, @BindBean Patients patients);
+			+ "where id = :id")
+	void update(@BindBean Patients patients, @Bind("id") int id );
 	
 	@SqlQuery("select id from patients where admissionnumber = :admissionnumber")
 	int findId(@Bind("admissionnumber") String admissionnumber);

@@ -46,8 +46,9 @@ public class CasesResources {
 	
 	@POST
 	@Path("/update")
-	public ResponseMessage update(@NotNull @Valid Cases cases) {
-		casesDAO.update(cases);
+	public ResponseMessage update(@NotNull @Valid Cases cases, @QueryParam("id") int id) {
+//		casesDAO.update(cases, id);
+		casesDAO.update(cases, id);
 		return new ResponseMessage(ErrorCode.SUCCESS, "update cases success.");
 	}
 }

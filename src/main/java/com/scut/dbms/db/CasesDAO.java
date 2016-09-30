@@ -34,7 +34,8 @@ public interface CasesDAO {
 	@SqlUpdate("update cases set patient_id = :patientId, diagnosis = :diagnosis, ecg = :ecg, "
 			+ "ecg_tag = :ecgTag, ct = :ct, ct_tag = :ctTag, complaint = :complaint, "
 			+ "radiography = :radiography, radiography_tag = :radiographyTag, hos_time = :hosTime, "
-			+ "radiography_time = :radiographyTime, ct_time = :ctTime, discharged_time = : dischargedTime, "
-			+ "remarks = :remarks, disease = :disease")
-	void update(@BindBean Cases cases);
+			+ "radiography_time = :radiographyTime, ct_time = :ctTime, discharged_time = :dischargedTime, "
+			+ "remarks = :remarks, disease = :disease where id = :id")
+
+	void update(@BindBean Cases cases , @Bind("id") int id);
 }

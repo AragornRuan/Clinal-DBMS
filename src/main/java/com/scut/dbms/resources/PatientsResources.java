@@ -68,10 +68,9 @@ public class PatientsResources {
 	
 	@POST
 	@Path("/update")
-	public ResponseMessage update(@QueryParam("oldadnum") String oldadnum, @NotNull @Valid Patients patients) {
-		patientsDAO.update(oldadnum, patients);
-		int id = patientsDAO.findId(patients.getAdmissionnumber());
-		return new UpdateResponseMessage(id, ErrorCode.SUCCESS, "Update patients according admissionnumber" + oldadnum +  "error.");
+	public ResponseMessage update(@NotNull @Valid Patients patients, @QueryParam("id") int id) {
+		patientsDAO.update(patients, id);
+		return new UpdateResponseMessage(id, ErrorCode.SUCCESS, "Update patients success.");
 	}
 
 }
