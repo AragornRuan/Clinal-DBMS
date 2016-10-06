@@ -17,6 +17,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 @Path("/patients")
@@ -25,6 +28,8 @@ import java.util.List;
 public class PatientsResources {
 	
 	private final PatientsDAO patientsDAO;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(PatientsResources.class);
 	
 	public PatientsResources(PatientsDAO patientsDAO) {
 		this.patientsDAO = patientsDAO;
@@ -44,6 +49,7 @@ public class PatientsResources {
 	
 	@GET
 	public List<Patients> findAll() {
+		LOGGER.info("Thread id is {}", Thread.currentThread());
 		return patientsDAO.findAll();
 	}
 	
