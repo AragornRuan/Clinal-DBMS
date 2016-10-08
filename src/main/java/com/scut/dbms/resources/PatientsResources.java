@@ -1,7 +1,9 @@
 package com.scut.dbms.resources;
 
 import com.scut.dbms.core.Patients;
+import com.scut.dbms.core.Times;
 import com.scut.dbms.db.PatientsDAO;
+import com.scut.dbms.db.TimesDAO;
 import com.scut.dbms.api.ResponseMessage;
 import com.scut.dbms.api.UpdateResponseMessage;
 import com.scut.dbms.error.ErrorCode;
@@ -28,11 +30,13 @@ import java.util.List;
 public class PatientsResources {
 	
 	private final PatientsDAO patientsDAO;
+	private final TimesDAO timesDAO;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PatientsResources.class);
 	
-	public PatientsResources(PatientsDAO patientsDAO) {
+	public PatientsResources(PatientsDAO patientsDAO, TimesDAO timesDAO) {
 		this.patientsDAO = patientsDAO;
+		this.timesDAO = timesDAO;
 	}
 	
 	@GET
@@ -49,7 +53,7 @@ public class PatientsResources {
 	
 	@GET
 	public List<Patients> findAll() {
-		LOGGER.info("Thread id is {}", Thread.currentThread());
+		LOGGER.info("Thread id is {}", Thread.currentThread().getId());
 		return patientsDAO.findAll();
 	}
 	
@@ -69,6 +73,7 @@ public class PatientsResources {
 	public ResponseMessage insert(@NotNull @Valid Patients patients) {
 		patientsDAO.insert(patients);
 		int id = patientsDAO.findId(patients.getAdmissionnumber());
+		timesDAO.insert(new Times(id, 0));
 		return new InsertResponseMessage(id, ErrorCode.SUCCESS, "Insert data into patients success."); 
 	}
 	

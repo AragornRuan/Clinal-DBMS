@@ -12,4 +12,6 @@ public class ErrorCode {
 	
 	public static final int DELETE_DATA_ERROR = 4;
 	
+	public static final int GENERATE_CDG_ERROR = 5;
+	
 }

@@ -8,6 +8,7 @@ import com.scut.dbms.db.CDGInfoDAO;
 import com.scut.dbms.db.CasesDAO;
 import com.scut.dbms.db.PatientsDAO;
 import com.scut.dbms.db.PatientsInfoDAO;
+import com.scut.dbms.db.TimesDAO;
 import com.scut.dbms.db.ECGDAO;
 import com.scut.dbms.resources.CDGInfoResources;
 import com.scut.dbms.resources.CDGResources;
@@ -38,7 +39,8 @@ public class DBMSApplication extends Application<DBMSConfiguration> {
 		final ECGDAO ecgDAO = jdbi.onDemand(ECGDAO.class);
 		final CDGDAO cdgDAO = jdbi.onDemand(CDGDAO.class);
 		final CDGInfoDAO cdgInfoDAO = jdbi.onDemand(CDGInfoDAO.class);
-		environment.jersey().register(new PatientsResources(patientsDAO));
+		final TimesDAO timesDAO = jdbi.onDemand(TimesDAO.class);
+		environment.jersey().register(new PatientsResources(patientsDAO, timesDAO));
 		environment.jersey().register(new CasesResources(casesDAO));
 		environment.jersey().register(new PatientsInfoResources(patientsInfoDAO));
 		environment.jersey().register(new ECGResources(ecgDAO));
