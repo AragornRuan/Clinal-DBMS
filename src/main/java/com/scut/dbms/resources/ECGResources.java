@@ -1,10 +1,11 @@
 package com.scut.dbms.resources;
 
-import com.scut.dbms.api.InsertResponseMessage;
 import com.scut.dbms.api.ResponseMessage;
 import com.scut.dbms.core.ECG;
 import com.scut.dbms.db.ECGDAO;
 import com.scut.dbms.error.ErrorCode;
+
+import redis.clients.jedis.Jedis;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -26,10 +27,17 @@ public class ECGResources {
 	
 	private ECGDAO ecgDAO;
 	
+	private static final String REDIS_HOST = "localhost";
+	private static final String LIST_NAME = "testId";
+	private static final String HASH_NAME = "ecgMap";
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ECGResources.class);
 	
+	private Jedis jedis;
+
 	public ECGResources(ECGDAO ecgDAO) {
 		this.ecgDAO = ecgDAO;
+		jedis = new Jedis(REDIS_HOST);
 	}
 	
 	@GET
@@ -38,12 +46,19 @@ public class ECGResources {
 	}
 	
 	@POST
-	@Path("/learning")
+	@Path("/insert")
 	public ResponseMessage insert(@Valid @NotNull ECG ecg) {
-		LOGGER.info("Start to insert ECG into ecg table.");
+		
+		LOGGER.info("Inserting ECG {} into Redis.", ecg.getTestId());
+
+		jedis.rpush(LIST_NAME, ecg.getTestId());
+		jedis.hset(HASH_NAME, ecg.getTestId(), ecg.getEcgData());
+		LOGGER.info("Inserted ECG {} into Redis.", ecg.getTestId());
+	
+		LOGGER.info("Inserting ECG {} into MySQL.", ecg.getTestId());
 		ecgDAO.insert(ecg);
-		LOGGER.info("Insert ECG into ecg table success.");
-		return new ResponseMessage(ErrorCode.SUCCESS, "Generate CDG success.");
+		LOGGER.info("Inserted ECG {} into MySQL.", ecg.getTestId());
+		return new ResponseMessage(ErrorCode.SUCCESS, "Inserted ECG.");
 	}
 
 }

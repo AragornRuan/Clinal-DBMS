@@ -19,7 +19,7 @@ public interface ECGDAO {
 	@SqlQuery("select ecg_data from ecg where testid = :testId")
 	String findECGData(@Bind("testId") String testId);
 	
-	@SqlUpdate("insert into ecg (testid, patient_id, ecg_data, source values "
-			+ "(:testId, :patientId, :ecgData, :source")
+	@SqlUpdate("insert into ecg (testid, patient_id, ecg_data, source) values "
+			+ "(:testId, :patientId, :ecgData, :source)")
 	void insert(@BindBean ECG ecg);
 }
