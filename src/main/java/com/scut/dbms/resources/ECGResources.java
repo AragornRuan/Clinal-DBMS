@@ -1,7 +1,9 @@
 package com.scut.dbms.resources;
 
 import com.scut.dbms.api.ResponseMessage;
+import com.scut.dbms.core.CDG;
 import com.scut.dbms.core.ECG;
+import com.scut.dbms.db.CDGDAO;
 import com.scut.dbms.db.ECGDAO;
 import com.scut.dbms.error.ErrorCode;
 
@@ -26,17 +28,20 @@ import org.slf4j.LoggerFactory;
 public class ECGResources {
 	
 	private ECGDAO ecgDAO;
+	private CDGDAO cdgDAO;
 	
 	private static final String REDIS_HOST = "localhost";
 	private static final String LIST_NAME = "testId";
-	private static final String HASH_NAME = "ecgMap";
+	private static final String ECG_MAP = "ecgMap";
+	private static final String CDG_MAP = "cdgMap";
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ECGResources.class);
 	
 	private Jedis jedis;
 
-	public ECGResources(ECGDAO ecgDAO) {
+	public ECGResources(ECGDAO ecgDAO, CDGDAO cdgDAO) {
 		this.ecgDAO = ecgDAO;
+		this.cdgDAO = cdgDAO;
 		jedis = new Jedis(REDIS_HOST);
 	}
 	
@@ -49,16 +54,47 @@ public class ECGResources {
 	@Path("/insert")
 	public ResponseMessage insert(@Valid @NotNull ECG ecg) {
 		
-		LOGGER.info("Inserting ECG {} into Redis.", ecg.getTestId());
+		String testId = ecg.getTestId();
+		LOGGER.info("Inserting ECG {} into Redis.", testId);
 
-		jedis.rpush(LIST_NAME, ecg.getTestId());
-		jedis.hset(HASH_NAME, ecg.getTestId(), ecg.getEcgData());
-		LOGGER.info("Inserted ECG {} into Redis.", ecg.getTestId());
+		jedis.rpush(LIST_NAME, testId);
+		jedis.hset(ECG_MAP, testId, ecg.getEcgData());
+		LOGGER.info("Inserted ECG {} into Redis.", testId);
 	
-		LOGGER.info("Inserting ECG {} into MySQL.", ecg.getTestId());
+		LOGGER.info("Inserting ECG {} into MySQL.", testId);
 		ecgDAO.insert(ecg);
-		LOGGER.info("Inserted ECG {} into MySQL.", ecg.getTestId());
+		LOGGER.info("Inserted ECG {} into MySQL.", testId);
 		return new ResponseMessage(ErrorCode.SUCCESS, "Inserted ECG.");
 	}
+	
+	@POST
+	@Path("/learn")
+	public ResponseMessage learn(@Valid @NotNull ECG ecg) throws InterruptedException {
+		
+		String testId = ecg.getTestId();
+		LOGGER.info("Inserting ECG {} into Redis.", testId);
+
+		jedis.rpush(LIST_NAME, testId);
+		jedis.hset(ECG_MAP, testId, ecg.getEcgData());
+		LOGGER.info("Inserted ECG {} into Redis.", testId);
+	
+		LOGGER.info("Inserting ECG {} into MySQL.", testId);
+		ecgDAO.insert(ecg);
+		LOGGER.info("Inserted ECG {} into MySQL.", testId);
+		
+		LOGGER.info("Generating CDG {}.", testId);
+		String cdgData = null;
+		while ((cdgData = jedis.hget(CDG_MAP, testId)) == null) {
+			Thread.sleep(50);
+		}
+		LOGGER.info("Generated CDG {}.", testId);
+		
+		LOGGER.info("Inserting CDG {} into MySQL.");
+		cdgDAO.insert(new CDG(testId, cdgData, "unknown", 0.0, 0.0));
+		LOGGER.info("Inserted CDG {} into MySQL.");
+		
+		return new ResponseMessage(ErrorCode.SUCCESS, "Inserted ECG, generated CDG and inserted CDG.");
+	}
+
 
 }

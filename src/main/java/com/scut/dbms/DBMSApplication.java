@@ -43,7 +43,7 @@ public class DBMSApplication extends Application<DBMSConfiguration> {
 		environment.jersey().register(new PatientsResources(patientsDAO, timesDAO));
 		environment.jersey().register(new CasesResources(casesDAO));
 		environment.jersey().register(new PatientsInfoResources(patientsInfoDAO));
-		environment.jersey().register(new ECGResources(ecgDAO));
+		environment.jersey().register(new ECGResources(ecgDAO, cdgDAO));
 		environment.jersey().register(new CDGResources(cdgDAO));
 		environment.jersey().register(new CDGInfoResources(cdgInfoDAO));
 	}
