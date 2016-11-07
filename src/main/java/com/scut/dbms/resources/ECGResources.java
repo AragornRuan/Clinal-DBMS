@@ -9,6 +9,9 @@ import com.scut.dbms.error.ErrorCode;
 
 import redis.clients.jedis.Jedis;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -89,12 +92,41 @@ public class ECGResources {
 		}
 		LOGGER.info("Generated CDG {}.", testId);
 		
-		LOGGER.info("Inserting CDG {} into MySQL.");
+		LOGGER.info("Inserting CDG {} into MySQL.", testId);
 		cdgDAO.insert(new CDG(testId, cdgData, "unknown", 0.0, 0.0));
-		LOGGER.info("Inserted CDG {} into MySQL.");
+		LOGGER.info("Inserted CDG {} into MySQL.", testId);
 		
 		return new ResponseMessage(ErrorCode.SUCCESS, "Inserted ECG, generated CDG and inserted CDG.");
 	}
-
+	
+	@POST
+	@Path("/multilearn")
+	public ResponseMessage multiLearn(@Valid @NotNull ArrayList<ECG> ecgs) throws InterruptedException {
+		
+		HashSet<String> testIds = new HashSet<String>();
+		LOGGER.info("Inserting ECGs into Redis and MySQL.");
+		for (ECG ecg : ecgs) {
+			testIds.add(ecg.getTestId());
+			jedis.hset(ECG_MAP, ecg.getTestId(), ecg.getEcgData());
+			jedis.rpush(LIST_NAME, ecg.getTestId());
+			ecgDAO.insert(ecg);
+		}
+		LOGGER.info("Inserted ECGs into Redis and MySQL.");
+	
+		
+		LOGGER.info("Generating and inserting CDGs.");
+		for (String testId : testIds) {
+			String cdgData = null;
+			while ((cdgData = jedis.hget(CDG_MAP, testId)) == null) {
+				Thread.sleep(50);
+			}
+			LOGGER.info("Inserting CDG {}.", testId);
+			cdgDAO.insert(new CDG(testId, cdgData, "unknown", 0.0, 0.0));
+			LOGGER.info("Inserted CDG {}.", testId);
+		}
+		LOGGER.info("Generated and inserted CDGs.");
+		
+		return new ResponseMessage(ErrorCode.SUCCESS, "Inserted ECG, generated CDG and inserted CDG.");
+	}
 
 }
