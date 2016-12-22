@@ -9,8 +9,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.scut.dbms.core.CDGInfo;
+import com.scut.dbms.core.Patients;
 import com.scut.dbms.db.CDGInfoDAO;
+import com.scut.dbms.db.PatientsDAO;
 
 @Path("/cdgInfo")
 @Produces(MediaType.APPLICATION_JSON)
@@ -18,14 +23,25 @@ import com.scut.dbms.db.CDGInfoDAO;
 public class CDGInfoResources {
 
 	private CDGInfoDAO cdgInfoDAO;
+	private PatientsDAO patientsDAO;
+	private static final Logger LOGGER = LoggerFactory.getLogger(CDGInfoResources.class);
 	
-	public CDGInfoResources(CDGInfoDAO cdgInfoDAO) {
+	public CDGInfoResources(CDGInfoDAO cdgInfoDAO, PatientsDAO patientsDAO) {
 		this.cdgInfoDAO = cdgInfoDAO;
+		this.patientsDAO = patientsDAO;
 	}
 	
 	@GET
 	public List<CDGInfo> queryCDGInfo(@QueryParam("patientId") int patientId) {
 		return cdgInfoDAO.queryCDGInfo(patientId);
+	}
+	
+	@GET
+	@Path("/adnum")
+	public List<CDGInfo> queryCDGInfoByAdmissionnumber(@QueryParam("admissionnumber") String admissionnumber) {
+		LOGGER.info("!!!!!!!!!" + admissionnumber + "!!!!!!!!!!!!!!");
+		Patients patients = patientsDAO.findByAdmissionnumber(admissionnumber);
+		return cdgInfoDAO.queryCDGInfo(patients.getId());
 	}
 	
 }

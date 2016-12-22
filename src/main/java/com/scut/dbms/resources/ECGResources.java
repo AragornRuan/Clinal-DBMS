@@ -114,7 +114,7 @@ public class ECGResources {
 		LOGGER.info("Inserted ECGs into Redis and MySQL.");
 	
 		
-		LOGGER.info("Generating and inserting CDGs.");
+/*		LOGGER.info("Generating and inserting CDGs.");
 		for (String testId : testIds) {
 			String cdgData = null;
 			while ((cdgData = jedis.hget(CDG_MAP, testId)) == null) {
@@ -124,7 +124,7 @@ public class ECGResources {
 			cdgDAO.insert(new CDG(testId, cdgData, "unknown", 0.0, 0.0));
 			LOGGER.info("Inserted CDG {}.", testId);
 		}
-		LOGGER.info("Generated and inserted CDGs.");
+		LOGGER.info("Generated and inserted CDGs.");*/
 		
 		return new ResponseMessage(ErrorCode.SUCCESS, "Inserted ECG, generated CDG and inserted CDG.");
 	}

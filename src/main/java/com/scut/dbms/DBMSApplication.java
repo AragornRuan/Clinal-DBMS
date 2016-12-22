@@ -18,8 +18,10 @@ import com.scut.dbms.resources.PatientsResources;
 import com.scut.dbms.resources.ECGResources;
 
 import io.dropwizard.Application;
+import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.setup.Bootstrap;
 /**
  * Hello world!
  *
@@ -27,6 +29,11 @@ import io.dropwizard.setup.Environment;
 public class DBMSApplication extends Application<DBMSConfiguration> {
 	public static void main(String[] args) throws Exception {
 		new DBMSApplication().run(args);
+	}
+	
+	@Override
+    public void initialize(Bootstrap<DBMSConfiguration> bootstrap) {
+		bootstrap.addBundle(new AssetsBundle("/assets/", "/", "index.html"));
 	}
 	
 	@Override
@@ -45,6 +52,6 @@ public class DBMSApplication extends Application<DBMSConfiguration> {
 		environment.jersey().register(new PatientsInfoResources(patientsInfoDAO));
 		environment.jersey().register(new ECGResources(ecgDAO, cdgDAO));
 		environment.jersey().register(new CDGResources(cdgDAO));
-		environment.jersey().register(new CDGInfoResources(cdgInfoDAO));
+		environment.jersey().register(new CDGInfoResources(cdgInfoDAO, patientsDAO));
 	}
 }
