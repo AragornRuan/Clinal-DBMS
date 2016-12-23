@@ -12,12 +12,12 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 @RegisterMapper(PatientsInfoMapper.class)
 public interface PatientsInfoDAO {
 	@SqlQuery("call patientInfoQuery(:name, :male, :female, :admissionnumber, :ecgNormal, "
-			+ ":ecgUnusual, :ctNormal, :ctSricture, :ctNothing, :radiographyNormal, "
+			+ ":ecgUnusual, :ctNormal, :ctStricture, :ctNothing, :radiographyNormal, "
 			+ ":radiographyStricture, :radiographyNoting, :negative, :positive, :probablePositive, "
 			+ ":times, :mindray, :aika, :cardis, :im, :ar)")
 	List<PatientsInfo> queryPatientsInfo(@Bind("name") String name, @Bind("male") int male, @Bind("female") int female,
 			@Bind("admissionnumber") String addmissionnumber, @Bind("ecgNormal") int ecgNormal, 
-			@Bind("ecgUnusual") int ecgUnusual, @Bind("ctNormal") int ctNormal, @Bind("ctSricture") int ctSricture, 
+			@Bind("ecgUnusual") int ecgUnusual, @Bind("ctNormal") int ctNormal, @Bind("ctStricture") int ctStricture, 
 			@Bind("ctNothing") int ctNothing, @Bind("radiographyNormal") int radiographyNormal, 
 			@Bind("radiographyStricture") int radiographyStricture, @Bind("radiographyNoting") int radiographyNoting, 
 			@Bind("negative") int negative, @Bind("positive") int positive, @Bind("probablePositive") int probablePositive,

@@ -39,7 +39,6 @@ public class CDGInfoResources {
 	@GET
 	@Path("/adnum")
 	public List<CDGInfo> queryCDGInfoByAdmissionnumber(@QueryParam("admissionnumber") String admissionnumber) {
-		LOGGER.info("!!!!!!!!!" + admissionnumber + "!!!!!!!!!!!!!!");
 		Patients patients = patientsDAO.findByAdmissionnumber(admissionnumber);
 		return cdgInfoDAO.queryCDGInfo(patients.getId());
 	}
