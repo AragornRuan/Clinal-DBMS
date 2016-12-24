@@ -1,5 +1,9 @@
 $(document).ready(function() {
 
+    /**
+     * 初始化表格
+     * @type {Object}
+     */
     $('#patientsData').DataTable({
         language: {
             "sProcessing": "处理中...",
@@ -53,6 +57,11 @@ $(document).ready(function() {
 
     });
 
+    /**
+     * 搜索事件，根据复选框筛选病人信息。
+     * @param  {Object}
+     * @return {[type]}
+     */
     $("#search").on("click", function() {
         var params = {
             "name": $("#name").val(),
@@ -78,6 +87,11 @@ $(document).ready(function() {
             "ar": (document.getElementById("ar").checked ? 1 : 0)
         };
 
+        /**
+         * 异步获取病人信息，并填充表格
+         * @param  {[type]}
+         * @return {[type]}
+         */
         $.ajax({
             "url": "api/patientsinfo",
             "type": "GET",
@@ -86,6 +100,7 @@ $(document).ready(function() {
             "success": function(data) {
 
                 var patientsDataTable = $("#patientsData").DataTable();
+                //先清空表格再填充。
                 patientsDataTable.clear();
                 for (var i = 0, len = data.length; i < len; i++) {
                     patientsDataTable.row.add(data[i]);
@@ -95,6 +110,9 @@ $(document).ready(function() {
         });
     });
 
+    /**
+     * 查看测试号与CDG诊断结果的事件。
+     */
     $("#patientsData tbody").on("click", "td.details-control", function() {
 
         var patientsDataTable = $("#patientsData").DataTable();
@@ -105,6 +123,7 @@ $(document).ready(function() {
         $.ajax({
             "url": "api/cdgInfo/adnum",
             "type": "GET",
+            //关闭异步，确保获得数据后才能执行子表查看。
             "async": false,
             "data": { "admissionnumber": row.data().admissionnumber },
             "dataType": "json",
@@ -119,10 +138,54 @@ $(document).ready(function() {
         } else {
             row.child(generateCdgInfoTable(cdgInfo)).show();
             tr.addClass("shown");
+
+            var cdgInfoTable = $(".cdgInfo").DataTable({
+                "searching": false,
+                "paging": false,
+                "info": false
+            });
+
         }
 
+        //获取CDG数据
+        $(".cdgInfo tbody").on("click", "tr", function() {
+            var cdgInfoTable = $(".cdgInfo").DataTable();
+            var tr = $(this).closest("tr");
+            var row = cdgInfoTable.row(tr);
+
+            $.ajax({
+                "url": "api/cdg",
+                "type": "GET",
+                "data": { "testId": row.data()[0]}, //tr.children()[0].textContent
+                "dataType": "json",
+                "success": function(data) {
+                    var cdgData = JSON.parse(data.cdgData);
+                    Plotly.purge(document.getElementById("graph"));
+                    Plotly.plot("graph", [{
+                        type: "scatter3d",
+                        mode: "lines",
+                        x: cdgData[0],
+                        y: cdgData[1],
+                        z: cdgData[2],
+                        opacity: 1,
+                        line: {
+                            width: 3,
+                            color: "red"
+                        }
+                    }], {
+                        height: 640
+                    });
+
+                    $("#CDGData").modal("show");
+                }
+            });
+        });
+
     });
-    
+
+    /*
+        查看病历的事件。
+     */
     $("#patientsData tbody").on("click", "td.content", function() {
         var patientsDataTable = $("#patientsData").DataTable();
         var tr = $(this).closest("tr");
@@ -145,12 +208,15 @@ $(document).ready(function() {
         });
     });
 
-
 });
 
 
 
-
+/**
+ * 产生CDG信息表格
+ * @param  {CDGInfo 对象，包含CDG诊断结果，测试号等信息。}
+ * @return {返回表格的html}
+ */
 function generateCdgInfoTable(cdgInfo) {
     var cdgInfoData = '';
 
@@ -161,7 +227,9 @@ function generateCdgInfoTable(cdgInfo) {
             '</tr>';
     }
 
-    return '<table class="table display" cellspaceing="0" width="100%" role="grid">' +
+    return '<div class="row">' +
+        '<div class="col-md-6">' +
+        '<table class="table display cdgInfo" cellspaceing="0" width="100%" role="grid">' +
         '<thead>' +
         '<th> 测试号 </th>' +
         '<th> CDG结果 </th>' +
@@ -169,18 +237,8 @@ function generateCdgInfoTable(cdgInfo) {
         '<tbody>' +
         cdgInfoData +
         '</tbody>' +
-        '</table>'
+        '</table>' +
+        '</div>' +
+        '<div class="col-md-6"></div>' +
+        '</div>'
 }
-
-/**
- * @param  {[type]}
- * @return {[type]}
- */
-/*function generateCase (data) {
-    var table = $("#patientsData").DataTable();
-    table.clear();
-    for (var i = 0, len = data.length; i < len; i++) {
-        table.row.add(data[i]);
-    }
-    table.draw();
-}*/

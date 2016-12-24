@@ -205,7 +205,7 @@
                                     </label>
                                 </div>
                                 <div class="col-md-9">
-                                   <!-- <label class="checkbox-inline">
+                                    <!-- <label class="checkbox-inline">
                                         <input type="checkbox" id="once" value="多次测量"> 单次测量
                                     </label>-->
                                     <label class="checkbox-inline">
@@ -319,12 +319,25 @@
             </div>
         </div>
     </div>
+    <!-- CDG, ECG显示-->
+    <div class="modal fade" id="CDGData" tabindex="-1" role="dialog" aria-labelledby="caseLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-body" style="width:500px;height:200px;">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="graph"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/scripts.js"></script>
     <script src="js/jquery.dataTables.min.js"></script>
     <script src="js/main.js"></script>
     <script src="js/dataTables.bootstrap.min.js"></script>
+    <script src="js/plotly-latest.min.js"></script>
 </body>
 
 </html>
