@@ -121,7 +121,7 @@ $(document).ready(function() {
 
         var cdgInfo = {};
         $.ajax({
-            "url": "api/cdgInfo/adnum",
+            "url": "api/diagnosis",
             "type": "GET",
             //关闭异步，确保获得数据后才能执行子表查看。
             "async": false,
@@ -142,13 +142,19 @@ $(document).ready(function() {
             var cdgInfoTable = $(".cdgInfo").DataTable({
                 "searching": false,
                 "paging": false,
-                "info": false
+                "info": false,
+                columns: [
+                    {"className": "testId"},
+                    {"className": "cdgResults"},
+                    {"className": "ecgResults"}
+                ]
+
             });
 
         }
 
         //获取CDG数据
-        $(".cdgInfo tbody").on("click", "tr", function() {
+        $(".cdgInfo tbody").on("click", "td.cdgResults", function() {
             var cdgInfoTable = $(".cdgInfo").DataTable();
             var tr = $(this).closest("tr");
             var row = cdgInfoTable.row(tr);
@@ -179,6 +185,16 @@ $(document).ready(function() {
                     $("#CDGData").modal("show");
                 }
             });
+        });
+
+        $(".cdgInfo tbody").on("mouseenter", "td.cdgResults", function() {
+            $(this).css("background-color", "lightgray");
+            $(this).css("cursor", "pointer");
+        });
+
+        $(".cdgInfo tbody").on("mouseleave", "td.cdgResults", function() {
+            $(this).css("background-color", "white");
+            $(this).css("cursor", "default");
         });
 
     });
@@ -224,21 +240,23 @@ function generateCdgInfoTable(cdgInfo) {
         cdgInfoData += '<tr>' +
             '<td>' + cdgInfo[i].testId + '</td>' +
             '<td>' + cdgInfo[i].cdgResults + '</td>' +
+            '<td>' + (cdgInfo[i].ecgTag == 1 ? '大致正常' : '可见异常') + '</td>' +
             '</tr>';
     }
 
     return '<div class="row">' +
-        '<div class="col-md-6">' +
+        '<div class="col-md-8">' +
         '<table class="table display cdgInfo" cellspaceing="0" width="100%" role="grid">' +
         '<thead>' +
         '<th> 测试号 </th>' +
         '<th> CDG结果 </th>' +
+        '<th> ECG结果 </th>' +
         '</thead>' +
         '<tbody>' +
         cdgInfoData +
         '</tbody>' +
         '</table>' +
         '</div>' +
-        '<div class="col-md-6"></div>' +
+        '<div class="col-md-4"></div>' +
         '</div>'
 }
