@@ -6,8 +6,123 @@ $(document).ready(function() {
         autoclose: true,
         todayBtn: true
     })
+    $("#search").on("click", function() {
+        $(this).css("cursor", "wait");
 
-    $("#add").on("click", function() {
+        var admissionnumber = $("#admissionnumberSearch").val();
+        if (admissionnumber.length != 6) {
+            alert("请输入正确的住院号:六位数字");
+            return;
+        }
+        $.ajax({
+            "url": "api/patients/adnum",
+            "type": "GET",
+            "data": { "admissionnumber": admissionnumber },
+            "dataType": "json",
+            "success": function(patients) {
+                if (data === undefined) {
+                    alert("无此病人信息");
+                    return;
+                }
+                setPatients(data);
+                $.ajax({
+                    "url": "api/cases/patientId",
+                    "type": "GET",
+                    "data": { "patientId": patients.id },
+                    "dataType": "json",
+                    "success": function(cases) {
+                        $("#search").css("cursor", "pointer");
+                        setCases(cases);
+                        $("#modification").modal("show");
+                    },
+                    "error": function(jqXHR, exception) {
+                        $("#search").css("cursor", "pointer");
+                        if (jqXHR.status === 0) {
+                            alert('Not connect.\n Verify Network.');
+                        } else if (jqXHR.status == 404) {
+                            alert('Requested page not found. [404]');
+                        } else if (jqXHR.status == 500) {
+                            alert('Internal Server Error [500].');
+                        } else if (exception === 'parsererror') {
+                            alert('Requested JSON parse failed.');
+                        } else if (exception === 'timeout') {
+                            alert('Time out error.');
+                        } else if (exception === 'abort') {
+                            alert('Ajax request aborted.');
+                        } else {
+                            alert('Uncaught Error.\n' + jqXHR.responseText);
+                        }
+                    }
+                });
+            },
+            "error": function(jqXHR, exception) {
+                $("#search").css("cursor", "pointer");
+                if (jqXHR.status === 0) {
+                    alert('Not connect.\n Verify Network.');
+                } else if (jqXHR.status == 404) {
+                    alert('Requested page not found. [404]');
+                } else if (jqXHR.status == 500) {
+                    alert('Internal Server Error [500].');
+                } else if (exception === 'parsererror') {
+                    alert('Requested JSON parse failed.');
+                } else if (exception === 'timeout') {
+                    alert('Time out error.');
+                } else if (exception === 'abort') {
+                    alert('Ajax request aborted.');
+                } else {
+                    alert('Uncaught Error.\n' + jqXHR.responseText);
+                }
+            }
+        });
+
+    });
+
+});
+
+function setPatients(patients) {
+    $("#name").val(patients.name);
+    $("#age").val(patients.age);
+    $("#sex").val(patients.sex);
+    $("#admissionnumber").val(patients.admissionnumber);
+}
+
+function setCases(cases) {
+    $("#disease").val(cases.disease);
+    $("#hosTime").val(cases.hosTime);
+    $("#dischargedTime").val(cases.dischargedTime);
+    $("#complaint").val(cases.complaint);
+
+    if (cases.ecgTag == 1) {
+        document.getElementById("ecgNormal").checked = true;
+    } else {
+        document.getElementById("ecgUnusual").checked = true;
+    }
+    $("#ecg").val(cases.ecg);
+
+    if (cases.ctTag == 0) {
+        document.getElementById("ctNothing").checked = true;
+    } else if (cases.ctTag == 1) {
+        document.getElementById("ctNormal").checked = true;
+    } else {
+        document.getElementById("ctStricture").checked = true;
+    }
+    $("#ct").val(cases.ct);
+
+    if (cases.radiographyTag == 0) {
+        document.getElementById("radiographyNothing").checked = true;
+    } else if (cases.radiographyTag == 1) {
+        document.getElementById("radiographyNormal").checked = true;
+    } else {
+        document.getElementById("radiographyStricture").checked = true;
+    }
+    $("#radiography").val(cases.radiography);
+
+    $("#diagnosis").val(cases.diagnosis);
+    $("#remarks").val(cases.remarks);
+}
+
+function modifyCases(patientId, caseId) {
+    $("#modify").on("click", function() {
         $(this).css("cursor", "wait");
 
         var admissionnumber = $("#admissionnumber").val();
@@ -22,22 +137,22 @@ $(document).ready(function() {
 
         if (admissionnumber.length != 6) {
             alert("请输入6位住院号!");
-            $("#add").css("cursor", "pointer");
+            $("#modify").css("cursor", "pointer");
             return;
         }
         if (!ecgNormal && !ecgUnusual) {
             alert("请选择心电图类型！");
-            $("#add").css("cursor", "pointer");
+            $("#modify").css("cursor", "pointer");
             return;
         }
         if (!ctNothing && !ctNormal && !ctStricture) {
             alert("请选择CT结果类型！");
-            $("#add").css("cursor", "pointer");
+            $("#modify").css("cursor", "pointer");
             return;
         }
         if (!radiographyNothing && !radiographyNormal && !radiographyStricture) {
             alert("请选择造影结果类型！");
-            $("#add").css("cursor", "pointer");
+            $("#modify").css("cursor", "pointer");
             return;
         }
 
@@ -55,7 +170,7 @@ $(document).ready(function() {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            "url": "api/patients/insert",
+            "url": "api/patients/update" + "?id=" + patientId,
             "type": "POST",
             //要将JSON object转成string形式，否则服务端无法处理JSON
             "data": JSON.stringify(patientsData),
@@ -84,16 +199,16 @@ $(document).ready(function() {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    "url": "api/cases/insert",
+                    "url": "api/cases/update" + "?id=" + caseId,
                     "type": "POST",
                     "data": JSON.stringify(casesData),
                     "dataType": "json",
                     "success": function(data) {
-                        $("#add").css("cursor", "pointer");
-                        alert("添加病历成功！");
+                        $("#modify").css("cursor", "pointer");
+                        alert("修改病历成功！");
                     },
                     "error": function(jqXHR, exception) {
-                        $("#add").css("cursor", "pointer");
+                        $("#modify").css("cursor", "pointer");
                         if (jqXHR.status === 0) {
                             alert('Not connect.\n Verify Network.');
                         } else if (jqXHR.status == 404) {
@@ -132,9 +247,5 @@ $(document).ready(function() {
                 }
             }
         });
-    });
-
-    $("#reset").on("click", function() {
-        location.reload();
-    });
-});
+    })
+}

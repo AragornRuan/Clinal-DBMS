@@ -74,10 +74,10 @@
             <div class="col-md-8">
                 <div class="col-md-2">
                     <div class="list-group">
-                        <a href="casesAddition.html" class="list-group-item active">
+                        <a href="casesAddition.html" class="list-group-item">
                             添加病历
                         </a>
-                        <a href="casesModification.html" class="list-group-item">
+                        <a href="casesModification.html" class="list-group-item active">
                             修改病历
                         </a>
                         <a href="dataUpload.html" class="list-group-item">
@@ -86,36 +86,50 @@
                     </div>
                 </div>
                 <div class="col-md-10">
-                    <div class="row">
-                        <form class="form-group bs-form">
-                            <fieldset>
-                                <legend class="text-danger">添加病历</legend>
+                    <form class="form-search bs-form">
+                        <div class="input-append">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <input type="text" class="span2 search-query" id="admissionnumberSearch" placeholder="输入住院号搜索病人" maxlength="6">
+                                    <button type="button" class="btn btn-primary" id="search">搜索</button>
+                                </div>
+                            </div>
+                    </form>
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
+            </div>
+        </div>
+        <!-- 病历显示 -->
+        <div class="modal fade" id="modification" tabindex="-1" role="dialog" aria-labelledby="caseLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h2 class="modal-title text-danger">病历修改</h2>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <form class="form-group bs-form">
                                 <div class="row">
-                                    <div class="col-md-3">
+                                    <div class="col-md-6">
                                         <label>病人类型</label>
                                         <select id="disease" class="form-control" required="required">
                                             <option value="0">心肌缺血</option>
                                             <option value="1">心律失常</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-3"></div>
-                                    <div class="col-md-3">
-                                        <button id="add" type="button" class="btn btn-block btn-success" style='font-size:20px'>
-                                            添加
-                                        </button>
-                                        <button id="reset" type="button" class="btn btn-block btn-warning   " style="font-size:20px">重置</button>
-                                    </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-2">
+                                    <div class="col-md-4">
                                         <label>姓名</label>
                                         <input type="text" placeholder="张三" id="name" class="form-control">
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-4">
                                         <label>年龄</label>
                                         <input type="number" id="age" class="form-control">
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-4">
                                         <label>性别</label>
                                         <select id="sex" class="form-control">
                                             <option value="男">男</option>
@@ -124,17 +138,17 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-2">
+                                    <div class="col-md-4">
                                         <label>住院号</label>
                                         <input type="text" placeholder="六位数字" id="admissionnumber" class="form-control" maxlength="6">
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-4">
                                         <label>
                                             入院时间
                                         </label>
                                         <input type="text" id="hosTime" class="form-control time">
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-4">
                                         <label>
                                             出院时间
                                         </label>
@@ -142,7 +156,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <label>
                                             主诉
                                         </label>
@@ -155,7 +169,7 @@
                                             心电图
                                         </label>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-8">
                                         <label class="radio-inline">
                                             <input type="radio" id="ecgNormal" name="ecgRadios"> 大致正常
                                         </label>
@@ -165,7 +179,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <textarea id="ecg" class="form-control"></textarea>
                                     </div>
                                 </div>
@@ -175,7 +189,7 @@
                                             CT结果
                                         </label>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-8">
                                         <label class="radio-inline">
                                             <input type="radio" id="ctNothing" name="ctRadios"> 暂缺
                                         </label>
@@ -188,7 +202,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <textarea id="ct" class="form-control"></textarea>
                                     </div>
                                 </div>
@@ -198,7 +212,7 @@
                                             造影结果
                                         </label>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-8">
                                         <label class="radio-inline">
                                             <input type="radio" id="radiographyNothing" name="radiographyRadios"> 暂缺
                                         </label>
@@ -211,12 +225,12 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <textarea id="radiography" class="form-control"></textarea>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <label>
                                             入院初次诊断
                                         </label>
@@ -224,25 +238,27 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <label>
                                             备注
                                         </label>
                                         <textarea id="remarks" class="form-control"></textarea>
                                     </div>
                                 </div>
-                            </fieldset>
-                        </form>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-success" id="modify">保存修改</button>
                     </div>
                 </div>
-                <div class="col-md-3"></div>
             </div>
         </div>
-    </div>
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/amazeui.datetimepicker.min.js"></script>
-    <script src="js/casesAddition.js"></script>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/amazeui.datetimepicker.min.js"></script>
+        <script src="js/casesModification.js"></script>
 </body>
 
 </html>
