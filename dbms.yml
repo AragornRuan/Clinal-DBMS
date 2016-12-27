@@ -14,7 +14,7 @@ server:
 #  hardNofileLimit: 1000
   applicationConnectors:
     - type: http
-      port: 8089
+      port: 8080
   rootPath: /api/
 
 #Redis host

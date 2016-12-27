@@ -1,12 +1,16 @@
 $(document).ready(function() {
 
+    var xAxis = [];
+    for (var i = 0; i < 20000; i++) {
+        xAxis.push(i);
+    }
     /**
      * 初始化表格
      * @type {Object}
      */
     $('#patientsData').DataTable({
         language: {
-            "sProcessing": "处理中...",
+            "sProcessing": "<img src='../images/ajax-loader.gif'>",
             "sLengthMenu": "显示 _MENU_ 项结果",
             "sZeroRecords": "没有匹配结果",
             "sInfo": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
@@ -63,6 +67,7 @@ $(document).ready(function() {
      * @return {[type]}
      */
     $("#search").on("click", function() {
+        $(this).css("cursor", "wait");
         var params = {
             "name": $("#name").val(),
             "male": (document.getElementById("male").checked ? 1 : 0),
@@ -98,7 +103,7 @@ $(document).ready(function() {
             "data": params,
             "dataType": "json",
             "success": function(data) {
-
+                $("#search").css("cursor", "pointer");
                 var patientsDataTable = $("#patientsData").DataTable();
                 //先清空表格再填充。
                 patientsDataTable.clear();
@@ -127,6 +132,7 @@ $(document).ready(function() {
             "async": false,
             "data": { "admissionnumber": row.data().admissionnumber },
             "dataType": "json",
+
             "success": function(data) {
                 cdgInfo = data;
             }
@@ -144,9 +150,9 @@ $(document).ready(function() {
                 "paging": false,
                 "info": false,
                 columns: [
-                    {"className": "testId"},
-                    {"className": "cdgResults"},
-                    {"className": "ecgResults"}
+                    { "className": "testId" },
+                    { "className": "cdgResults" },
+                    { "className": "ecgResults" }
                 ]
 
             });
@@ -155,6 +161,7 @@ $(document).ready(function() {
 
         //获取CDG数据
         $(".cdgInfo tbody").on("click", "td.cdgResults", function() {
+            $(this).css("cursor", "wait");
             var cdgInfoTable = $(".cdgInfo").DataTable();
             var tr = $(this).closest("tr");
             var row = cdgInfoTable.row(tr);
@@ -162,12 +169,14 @@ $(document).ready(function() {
             $.ajax({
                 "url": "api/cdg",
                 "type": "GET",
-                "data": { "testId": row.data()[0]}, //tr.children()[0].textContent
+                "data": { "testId": row.data()[0] }, //tr.children()[0].textContent
                 "dataType": "json",
+
                 "success": function(data) {
+                    $(".cdgInfo").css("cursor", "default");
                     var cdgData = JSON.parse(data.cdgData);
-                    Plotly.purge(document.getElementById("graph"));
-                    Plotly.plot("graph", [{
+                    Plotly.purge(document.getElementById("graphCDG"));
+                    Plotly.plot("graphCDG", [{
                         type: "scatter3d",
                         mode: "lines",
                         x: cdgData[0],
@@ -184,9 +193,50 @@ $(document).ready(function() {
 
                     $("#CDGData").modal("show");
                 }
+
             });
         });
 
+        //获取ECG数据
+        $(".cdgInfo tbody").on("click", "td.ecgResults", function() {
+            $(this).css("cursor", "wait");
+            var cdgInfoTable = $(".cdgInfo").DataTable();
+            var tr = $(this).closest("tr");
+            var row = cdgInfoTable.row(tr);
+
+            $.ajax({
+                "url": "api/ecg",
+                "type": "GET",
+                "data": { "testId": row.data()[0] }, //tr.children()[0].textContent
+                "dataType": "json",
+
+                "success": function(data) {
+                    $(".cdgInfo").css("cursor", "default");
+                    var ecgData = JSON.parse(data.ecgData);
+                    
+                    Plotly.purge(document.getElementById("graphECG"));
+                    Plotly.plot("graphECG", [{
+                        type: "scatter",
+                        mode: "lines",
+                        x: xAxis,
+                        y: ecgData[6],
+                        opacity: 1,
+                        line: {
+                            width: 1,
+                            color: "red"
+                        }
+                    }], {
+                        height: 640,
+                    });
+             //       $("#ECGData").modal("show");
+                }
+
+            });
+        });
+
+        /**
+         *  鼠标移动到CDGResults和ECGResults的单元格时改变样式
+         */
         $(".cdgInfo tbody").on("mouseenter", "td.cdgResults", function() {
             $(this).css("background-color", "lightgray");
             $(this).css("cursor", "pointer");
@@ -197,12 +247,23 @@ $(document).ready(function() {
             $(this).css("cursor", "default");
         });
 
+        $(".cdgInfo tbody").on("mouseenter", "td.ecgResults", function() {
+            $(this).css("background-color", "lightgray");
+            $(this).css("cursor", "pointer");
+        });
+
+        $(".cdgInfo tbody").on("mouseleave", "td.ecgResults", function() {
+            $(this).css("background-color", "white");
+            $(this).css("cursor", "default");
+        });
+
     });
 
     /*
         查看病历的事件。
      */
     $("#patientsData tbody").on("click", "td.content", function() {
+        $(this).css("cursor", "wait");
         var patientsDataTable = $("#patientsData").DataTable();
         var tr = $(this).closest("tr");
         var row = patientsDataTable.row(tr);
@@ -212,7 +273,9 @@ $(document).ready(function() {
             "type": "GET",
             "data": { "admissionnumber": row.data().admissionnumber },
             "dataType": "json",
+
             "success": function(data) {
+                $(".content").css("cursor", "default");
                 $("#caseTitle").text(row.data().name + "的病历");
                 $("#complaintCase").text(data.complaint);
                 $("#ecgCase").text((data.ecgTag === 1 ? "大致正常" : "未见异常"));

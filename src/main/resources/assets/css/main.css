@@ -2,6 +2,126 @@ td.details-control {
     background: url('../images/details_open.png') no-repeat center center;
     cursor: pointer;
 }
+
 tr.shown td.details-control {
     background: url('../images/details_close.png') no-repeat center center;
+}
+
+.jumbotron {
+    position: relative;
+    padding: 40px 0;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, .4), 0 0 30px rgba(0, 0, 0, .075);
+    background: #020031;
+    /* Old browsers */
+    background: -moz-linear-gradient(45deg, #020031 0%, #6d3353 100%);
+    /* FF3.6+ */
+    background: -webkit-gradient(linear, left bottom, right top, color-stop(0%, #020031), color-stop(100%, #6d3353));
+    /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(45deg, #020031 0%, #6d3353 100%);
+    /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(45deg, #020031 0%, #6d3353 100%);
+    /* Opera 11.10+ */
+    background: -ms-linear-gradient(45deg, #020031 0%, #6d3353 100%);
+    /* IE10+ */
+    background: linear-gradient(45deg, #020031 0%, #6d3353 100%);
+    /* W3C */
+    filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#020031', endColorstr='#6d3353', GradientType=1);
+    /* IE6-9 fallback on horizontal gradient */
+    -webkit-box-shadow: inset 0 3px 7px rgba(0, 0, 0, .2), inset 0 -3px 7px rgba(0, 0, 0, .2);
+    -moz-box-shadow: inset 0 3px 7px rgba(0, 0, 0, .2), inset 0 -3px 7px rgba(0, 0, 0, .2);
+    box-shadow: inset 0 3px 7px rgba(0, 0, 0, .2), inset 0 -3px 7px rgba(0, 0, 0, .2);
+}
+
+.jumbotron h1 {
+    font-size: 60px;
+    font-weight: bold;
+    letter-spacing: -1px;
+    line-height: 1;
+}
+
+.jumbotron p {
+    font-size: 24px;
+    font-weight: 300;
+    line-height: 1.25;
+    margin-bottom: 30px;
+}
+
+
+/* Link styles (used on .masthead-links as well) */
+
+.jumbotron a {
+    color: #fff;
+    color: rgba(255, 255, 255, .5);
+    -webkit-transition: all .2s ease-in-out;
+    -moz-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+}
+
+.jumbotron a:hover {
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, .25);
+}
+
+.bs-form {
+    position: relative;
+    margin: 15px 0;
+    padding: 39px 19px 14px;
+    *padding-top: 19px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+
+/* Echo out a label for the example */
+
+.bs-form:after {
+    content: "病历录入";
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    color: #9da0a4;
+    -webkit-border-radius: 4px 0 4px 0;
+    -moz-border-radius: 4px 0 4px 0;
+    border-radius: 4px 0 4px 0;
+}
+
+
+/* Remove spacing between an example and it's code */
+
+.bs-form + .prettyprint {
+    margin-top: -20px;
+    padding-top: 15px;
+}
+
+
+/* Tweak examples
+------------------------- */
+
+.bs-form > p:last-child {
+    margin-bottom: 0;
+}
+
+.bs-form .table,
+.bs-form .progress,
+.bs-form .well,
+.bs-form .alert,
+.bs-form .hero-unit,
+.bs-form .pagination,
+.bs-form .navbar,
+.bs-form > .nav,
+.bs-form blockquote {
+    margin-bottom: 5px;
+}
+
+.bs-form .pagination {
+    margin-top: 0;
 }
