@@ -8,10 +8,9 @@
     <title>Bootstrap 3, from LayoutIt!</title>
     <meta name="description" content="Source code generated using layoutit.com">
     <meta name="author" content="LayoutIt!">
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/jquery.dataTables.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/amazeui.datetimepicker.css">
 </head>
 
 <body>
@@ -95,10 +94,17 @@
                             <div class="row">
                                 <div class="col-md-3">
                                     <label>病人类型</label>
-                                    <select id="diseaseType" class="form-control" required="required">
+                                    <select id="disease" class="form-control" required="required">
                                         <option value="0">心肌缺血</option>
                                         <option value="1">心律失常</option>
                                     </select>
+                                </div>
+                                <div class="col-md-3"></div>
+                                <div class="col-md-3">
+                                    <button id="add" type="button" class="btn btn-block btn-success" style='font-size:20px'>
+                                        添加
+                                    </button>
+                                    <button id="reset" type="button" class="btn btn-block btn-warning   " style="font-size:20px">重置</button>
                                 </div>
                             </div>
                             <div class="row">
@@ -108,7 +114,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <label>年龄</label>
-                                    <input type="number" id="age" class="form-control" >
+                                    <input type="number" id="age" class="form-control">
                                 </div>
                                 <div class="col-md-2">
                                     <label>性别</label>
@@ -121,12 +127,109 @@
                             <div class="row">
                                 <div class="col-md-2">
                                     <label>住院号</label>
-                                    <input type="text" placeholder="六位数字" id="admissionnumber" class="form-control">
+                                    <input type="text" placeholder="六位数字" id="admissionnumber" class="form-control" maxlength="6">
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <label>
                                         入院时间
                                     </label>
+                                    <input type="text" id="hosTime" class="form-control time">
+                                </div>
+                                <div class="col-md-2">
+                                    <label>
+                                        出院时间
+                                    </label>
+                                    <input type="text" id="dischargedTime" class="form-control time">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>
+                                        主诉
+                                    </label>
+                                    <textarea id="complaint" class="form-control"></textarea>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label>
+                                        心电图
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="radio-inline">
+                                        <input type="radio" id="ecgNormal" name="ecgRadios"> 大致正常
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" id="ecgUnusual" name="ecgRadios"> 可见异常
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <textarea id="ecg" class="form-control"></textarea>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label>
+                                        CT结果
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="radio-inline">
+                                        <input type="radio" id="ctNothing" name="ctRadios"> 暂缺
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" id="ctNormal" name="ctRadios"> 未见异常
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" id="ctStricture" name="ctRadios"> 狭窄
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <textarea id="ct" class="form-control"></textarea>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label>
+                                        造影结果
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="radio-inline">
+                                        <input type="radio" id="radiographyNothing" name="radiographyRadios"> 暂缺
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" id="radiographyNormal" name="radiographyRadios"> 未见异常
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" id="radiographyStricture" name="radiographyRadios"> 狭窄
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <textarea id="radiography" class="form-control"></textarea>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>
+                                        入院初次诊断
+                                    </label>
+                                    <textarea id="diagnosis" class="form-control"></textarea>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>
+                                        备注
+                                    </label>
+                                    <textarea id="remarks" class="form-control"></textarea>
                                 </div>
                             </div>
                         </form>
@@ -138,11 +241,8 @@
     </div>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script src="js/scripts.js"></script>
-    <script src="js/jquery.dataTables.min.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/dataTables.bootstrap.min.js"></script>
-    <script src="js/plotly-latest.min.js"></script>
+    <script src="js/amazeui.datetimepicker.min.js"></script>
+    <script src="js/casesAddition.js"></script>
 </body>
 
 </html>
