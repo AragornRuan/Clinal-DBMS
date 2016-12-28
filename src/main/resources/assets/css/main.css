@@ -125,3 +125,7 @@ tr.shown td.details-control {
 .bs-form .pagination {
     margin-top: 0;
 }
+
+.searchButton {
+    margin-top: 20px;
+}
