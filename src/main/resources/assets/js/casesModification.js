@@ -6,6 +6,10 @@ $(document).ready(function() {
         autoclose: true,
         todayBtn: true
     })
+
+    /**
+     * 根据住院号查询病人
+     */
     $("#search").on("click", function() {
         $(this).css("cursor", "wait");
 
@@ -20,11 +24,11 @@ $(document).ready(function() {
             "data": { "admissionnumber": admissionnumber },
             "dataType": "json",
             "success": function(patients) {
-                if (data === undefined) {
+                if (patients === undefined) {
                     alert("无此病人信息");
                     return;
                 }
-                setPatients(data);
+                setPatients(patients);
                 $.ajax({
                     "url": "api/cases/patientId",
                     "type": "GET",
@@ -34,6 +38,7 @@ $(document).ready(function() {
                         $("#search").css("cursor", "pointer");
                         setCases(cases);
                         $("#modification").modal("show");
+                        modifyCases(patients.id, cases.id);
                     },
                     "error": function(jqXHR, exception) {
                         $("#search").css("cursor", "pointer");
@@ -79,6 +84,7 @@ $(document).ready(function() {
 
 });
 
+//在修改病历页面中设置病人基本信息
 function setPatients(patients) {
     $("#name").val(patients.name);
     $("#age").val(patients.age);
@@ -86,6 +92,7 @@ function setPatients(patients) {
     $("#admissionnumber").val(patients.admissionnumber);
 }
 
+//在修改病历页面中设置病人病历信息
 function setCases(cases) {
     $("#disease").val(cases.disease);
     $("#hosTime").val(cases.hosTime);
@@ -121,8 +128,10 @@ function setCases(cases) {
     $("#remarks").val(cases.remarks);
 }
 
+//根据paiemts和cases表中的id列，更新修改后的信息
 function modifyCases(patientId, caseId) {
     $("#modify").on("click", function() {
+    	//改变鼠标样式为等待
         $(this).css("cursor", "wait");
 
         var admissionnumber = $("#admissionnumber").val();
