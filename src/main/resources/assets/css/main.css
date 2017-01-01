@@ -129,3 +129,49 @@ tr.shown td.details-control {
 .searchButton {
     margin-top: 20px;
 }
+
+.scutLogo img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin: 0 auto;
+}
+
+.redLine {
+    height: 1px;
+    margin: 0px auto;
+    padding: 0px;
+    background-color: #ff3333;
+    overflow: hidden;
+}
+
+.greyLine {
+    height: 1px;
+    margin: 0px auto;
+    padding: 0px;
+    background-color: #D5D5D5;
+    overflow: hidden;
+}
+
+.contact {
+    margin-top: 20px;
+}
+
+.copyRight {
+    height: 50px;
+    background: -moz-linear-gradient(45deg, #020031 0%, #6d3353 100%);
+    /* FF3.6+ */
+    background: -webkit-gradient(linear, left bottom, right top, color-stop(0%, #020031), color-stop(100%, #6d3353));
+    /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(45deg, #020031 0%, #6d3353 100%);
+    /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(45deg, #020031 0%, #6d3353 100%);
+    /* Opera 11.10+ */
+    background: -ms-linear-gradient(45deg, #020031 0%, #6d3353 100%);
+    /* IE10+ */
+    background: linear-gradient(45deg, #020031 0%, #6d3353 100%);
+
+    color: #fff;
+
+    padding-top: 15px;
+}

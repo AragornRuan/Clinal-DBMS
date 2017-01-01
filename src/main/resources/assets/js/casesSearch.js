@@ -209,7 +209,7 @@ $(document).ready(function() {
                 "success": function(data) {
                     $(".cdgInfo").css("cursor", "default");
                     var ecgData = JSON.parse(data.ecgData);
-                    
+
                     Plotly.purge(document.getElementById("graphECG"));
                     Plotly.plot("graphECG", [{
                         type: "scatter",
@@ -224,7 +224,7 @@ $(document).ready(function() {
                     }], {
                         height: 640,
                     });
-             //       $("#ECGData").modal("show");
+                    //       $("#ECGData").modal("show");
                 }
 
             });
@@ -252,6 +252,7 @@ $(document).ready(function() {
             $(this).css("background-color", "white");
             $(this).css("cursor", "default");
         });
+
 
     });
 
@@ -281,6 +282,31 @@ $(document).ready(function() {
                 $("#patientCase").modal("show");
             }
         });
+    });
+
+    //重置筛选条件
+    $("#reset").on("click", function() {
+        $("#name").val("");
+        document.getElementById("male").checked = false;
+        document.getElementById("female").checked = false;
+        $("#admissionnumber").val("");
+        document.getElementById("ecgNormal").checked = false;
+        document.getElementById("ecgUnusual").checked = false;
+        document.getElementById("ctNormal").checked = false;
+        document.getElementById("ctStricture").checked = false;
+        document.getElementById("ctNothing").checked  = false;
+        document.getElementById("radiographyNormal").checked = false;
+        document.getElementById("radiographyStricture").checked = false;
+        document.getElementById("radiographyNothing").checked = false;
+        document.getElementById("negative").checked = false;
+        document.getElementById("positive").checked = false;
+        document.getElementById("probablePositive").checked = false;
+        document.getElementById("times").checked = false;
+        document.getElementById("mindray").checked = false;
+        document.getElementById("aika").checked = false;
+        document.getElementById("cardis").checked = false;
+        document.getElementById("im").checked = false;
+        document.getElementById("ar").checked = false;
     });
 
 });
