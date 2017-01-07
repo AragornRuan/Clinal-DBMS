@@ -134,7 +134,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(FileOperations.clas
 			}
 		}
 	}
-	
+
 	public static void writeToFile(InputStream uploadedInputStream, String uploadedFileLocation) throws IOException {
         int read;
         final int BUFFER_LENGTH = 1024;

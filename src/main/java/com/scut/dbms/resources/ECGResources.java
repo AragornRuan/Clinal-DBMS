@@ -8,8 +8,8 @@ import com.scut.dbms.db.CDGDAO;
 import com.scut.dbms.db.ECGDAO;
 import com.scut.dbms.error.ErrorCode;
 import com.scut.dbms.utils.FileOperations;
-import com.sun.jersey.core.header.FormDataContentDisposition;
-import com.sun.jersey.multipart.FormDataParam;
+//import com.sun.jersey.core.header.FormDataContentDisposition;
+//import com.sun.jersey.multipart.FormDataParam;
 
 import io.dropwizard.jdbi.ImmutableListContainerFactory;
 import redis.clients.jedis.Jedis;
@@ -30,6 +30,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

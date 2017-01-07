@@ -1,5 +1,6 @@
 package com.scut.dbms;
 
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.skife.jdbi.v2.DBI;
 
 import com.scut.dbms.DBMSConfiguration;
@@ -50,6 +51,7 @@ public class DBMSApplication extends Application<DBMSConfiguration> {
 		final CDGInfoDAO cdgInfoDAO = jdbi.onDemand(CDGInfoDAO.class);
 		final TimesDAO timesDAO = jdbi.onDemand(TimesDAO.class);
 		final DiagnosisDAO diagnosisDAO = jdbi.onDemand(DiagnosisDAO.class);
+environment.jersey().register(MultiPartFeature.class);
 		environment.jersey().register(new PatientsResources(patientsDAO, timesDAO));
 		environment.jersey().register(new CasesResources(casesDAO, patientsDAO));
 		environment.jersey().register(new PatientsInfoResources(patientsInfoDAO));
