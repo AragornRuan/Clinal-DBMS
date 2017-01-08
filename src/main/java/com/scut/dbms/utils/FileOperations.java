@@ -90,7 +90,6 @@ private static final Logger LOGGER = LoggerFactory.getLogger(FileOperations.clas
 			for (File file : directory.listFiles()) {
 				files.add(file);
 			}
-			LOGGER.debug("files' size is {}.", files.size());
 		}
 		else {
 			LOGGER.error("List files from {} error.", dirPath);
