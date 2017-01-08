@@ -154,9 +154,10 @@ public class ECGResources {
 		runHadoop.append("python cardio.py ").append(inputDir).append(" ").append(outputDir);
 		
 		Process process = Runtime.getRuntime().exec(runHadoop.toString());
-		LOGGER.info("Generating CDG...");
+		LOGGER.info("Generating CDG.");
 		process.waitFor();
-		
+		LOGGER.info("Generated CDG.");
+
 		return new ResponseMessage(ErrorCode.SUCCESS, "Calculate CDG successfully.");
 		
 	}

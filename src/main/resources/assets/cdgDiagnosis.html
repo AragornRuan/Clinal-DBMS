@@ -10,6 +10,7 @@
     <meta name="author" content="LayoutIt!">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/diagnosis.css">
     <link rel="stylesheet" href="css/jquery.fileupload.css">
 </head>
 
@@ -103,23 +104,25 @@
                                 <span>添加ECG</span>
                                 <input type="file" name="files" class="fileupload" id="filesupload" multiple>
                                 </span>
-                                <div id="progress" class="progress">
-                                    <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                                    </div>
-                                </div>
-                                <span id="progress_str"></span>
                             </div>
                         </form>
+                    </div>
+                    <div class="row" style="margin-top:10px;margin-bottom:10px">
+                        <div id="progress" class="progress">
+                            <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                        <span id="progress_str"></span>
                     </div>
                     <div class="row">
                         <span class="btn btn-primary fileinput-button" id="diagnosis">
                             <i class="glyphicon glyphicon-heart"></i>
-                            <span>CDG诊断</span>
+                            <span id="cdgDiagnosisText">CDG诊断</span>
                         </span>
+                        <img src="images/ajax-loader.gif" style="display:none" id="loadingGif">
                     </div>
                     <div class="row">
-                        <h3>CDG诊断中...</h3>
-                        <img src="images/ajax-loader.gif">
+                        <span id="diagnosis_str"></span>
                     </div>
                 </div>
             </div>
