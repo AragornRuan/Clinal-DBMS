@@ -1,6 +1,5 @@
 package com.scut.dbms.resources;
 
-import com.google.common.base.Strings;
 import com.scut.dbms.api.ResponseMessage;
 import com.scut.dbms.api.UploadFileResponseMessage;
 import com.scut.dbms.constants.FileConstants;
@@ -10,24 +9,18 @@ import com.scut.dbms.db.CDGDAO;
 import com.scut.dbms.db.ECGDAO;
 import com.scut.dbms.error.ErrorCode;
 import com.scut.dbms.utils.FileOperations;
-//import com.sun.jersey.core.header.FormDataContentDisposition;
-//import com.sun.jersey.multipart.FormDataParam;
 
-import io.dropwizard.jdbi.ImmutableListContainerFactory;
 import redis.clients.jedis.Jedis;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.rmi.server.UID;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.sound.sampled.Line;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -228,6 +221,8 @@ public class ECGResources {
 			String cdgResults = diagnosis(paraFft, paraLya, paraAll);
 			CDG cdg = new CDG(testId, cdgData, cdgResults, paraFft, paraLya);
 			cdgDAO.insert(cdg);
+			
+			reader.close();
 		}
 		
 		return new ResponseMessage(ErrorCode.SUCCESS, "Generated and stored the CDG.");
