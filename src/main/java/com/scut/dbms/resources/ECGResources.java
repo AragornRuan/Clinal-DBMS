@@ -172,11 +172,22 @@ public class ECGResources {
 	public ResponseMessage uploadFile(
 			@FormDataParam("files") InputStream uploadedInputStream,
 			@FormDataParam("files") FormDataContentDisposition fileDetail) throws IOException {
+		
+		String filename = fileDetail.getFileName();
+		LOGGER.info("Receive file {}.", filename);
 		long threadId = Thread.currentThread().getId();
 		String inputDir = FileConstants.HADOOP_INPUT_DIR + threadId + FileConstants.FILE_SEPARATOR; 
 		FileOperations.makeDir(inputDir);
-		String uploadedFileLocation = inputDir + fileDetail.getFileName();
+		
+		String uploadedFileLocation = inputDir + filename;
 		FileOperations.writeToFile(uploadedInputStream, uploadedFileLocation);
+		
+		//如果是zip格式的压缩包，则对其解压，并在解压后删除压缩包
+		if (filename.contains(FileConstants.ZIP_FILE_SUFFIX)) {
+			FileOperations.unzip(inputDir, filename);
+			FileOperations.deleteFile(inputDir + filename);
+		}
+		
 		return new UploadFileResponseMessage(threadId, ErrorCode.SUCCESS, "Upload file " + fileDetail.getFileName() + " successfully.");
 	}
 	
