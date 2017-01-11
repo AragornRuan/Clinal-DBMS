@@ -14,4 +14,6 @@ public class ErrorCode {
 	
 	public static final int GENERATE_CDG_ERROR = 5;
 	
+	public static final int STORE_ECG_ERROR = 6;
+	
 }

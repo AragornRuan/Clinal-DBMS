@@ -55,7 +55,7 @@ environment.jersey().register(MultiPartFeature.class);
 		environment.jersey().register(new PatientsResources(patientsDAO, timesDAO));
 		environment.jersey().register(new CasesResources(casesDAO, patientsDAO));
 		environment.jersey().register(new PatientsInfoResources(patientsInfoDAO));
-		environment.jersey().register(new ECGResources(ecgDAO, cdgDAO));
+		environment.jersey().register(new ECGResources(ecgDAO, cdgDAO, patientsDAO));
 		environment.jersey().register(new CDGResources(cdgDAO));
 		environment.jersey().register(new CDGInfoResources(cdgInfoDAO, patientsDAO));
 		environment.jersey().register(new DiagnosisResources(diagnosisDAO));
