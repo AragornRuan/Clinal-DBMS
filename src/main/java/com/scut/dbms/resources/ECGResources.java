@@ -1,22 +1,23 @@
 package com.scut.dbms.resources;
 
 import com.scut.dbms.api.ResponseMessage;
+import com.scut.dbms.api.StoreCDGResponseMessage;
 import com.scut.dbms.api.UploadFileResponseMessage;
 import com.scut.dbms.constants.FileConstants;
 import com.scut.dbms.core.CDG;
 import com.scut.dbms.core.ECG;
+import com.scut.dbms.core.Times;
 import com.scut.dbms.db.CDGDAO;
 import com.scut.dbms.db.ECGDAO;
 import com.scut.dbms.db.PatientsDAO;
+import com.scut.dbms.db.TimesDAO;
 import com.scut.dbms.error.ErrorCode;
 import com.scut.dbms.utils.FileOperations;
 
 import redis.clients.jedis.Jedis;
 
-import java.awt.color.CMMException;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,6 +48,7 @@ public class ECGResources {
 	private ECGDAO ecgDAO;
 	private CDGDAO cdgDAO;
 	private PatientsDAO patientsDAO;
+	private TimesDAO timesDAO;
 
 	private static final String REDIS_HOST = "localhost";
 	private static final String LIST_NAME = "testId";
@@ -61,10 +63,11 @@ public class ECGResources {
 
 	private Jedis jedis;
 
-	public ECGResources(ECGDAO ecgDAO, CDGDAO cdgDAO, PatientsDAO patientsDAO) {
+	public ECGResources(ECGDAO ecgDAO, CDGDAO cdgDAO, PatientsDAO patientsDAO, TimesDAO timesDAO) {
 		this.ecgDAO = ecgDAO;
 		this.cdgDAO = cdgDAO;
 		this.patientsDAO = patientsDAO;
+		this.timesDAO = timesDAO;
 		jedis = new Jedis(REDIS_HOST);
 	}
 
@@ -159,12 +162,12 @@ public class ECGResources {
 		runHadoop.append("python cardio.py ").append(inputDir).append(" ").append(outputDir);
 
 		Process process = Runtime.getRuntime().exec(runHadoop.toString());
-		LOGGER.info("Generating CDG using Hadoop.");
+		LOGGER.info("Generating CDG using Hadoop, input directory {}, output directory {}.", inputDir, outputDir);
 		process.waitFor();
-		LOGGER.info("Generated CDG using Hadoop.");
+		LOGGER.info("Generated CDG using Hadoop, input directory {}, output directory {}.", inputDir, outputDir);
 
 		LOGGER.info("Storing CDG data into MySQL..");
-		ResponseMessage response = storeCDG(outputDir);
+		ResponseMessage response = storeCDG(inputDir, outputDir);
 		LOGGER.info("Stored CDG data into MySQL..");
 
 		return response;
@@ -178,10 +181,10 @@ public class ECGResources {
 			@FormDataParam("files") FormDataContentDisposition fileDetail) throws IOException {
 
 		String filename = fileDetail.getFileName();
-		LOGGER.info("Receive file {}.", filename);
 		long threadId = Thread.currentThread().getId();
 		String inputDir = FileConstants.HADOOP_INPUT_DIR + threadId + FileConstants.FILE_SEPARATOR;
 		FileOperations.makeDir(inputDir);
+		LOGGER.info("Received file {}.", inputDir + filename);
 
 		String uploadedFileLocation = inputDir + filename;
 		FileOperations.writeToFile(uploadedInputStream, uploadedFileLocation);
@@ -191,11 +194,11 @@ public class ECGResources {
 			FileOperations.unzip(inputDir, filename);
 			FileOperations.deleteFile(inputDir + filename);
 		}
-		
+
 		LOGGER.info("Storing ECG data into MySQL.");
 		List<String> errorECG = storeECG(inputDir);
 		LOGGER.info("Stored ECG data into MySQL.");
-		
+
 		return new UploadFileResponseMessage(threadId, errorECG, ErrorCode.SUCCESS,
 				"Upload file " + fileDetail.getFileName() + " successfully.");
 	}
@@ -209,12 +212,13 @@ public class ECGResources {
 	 * @return 返回相应信息类
 	 * @throws IOException
 	 */
-	private ResponseMessage storeCDG(String outputDir) throws IOException {
+	private ResponseMessage storeCDG(String inputDir, String outputDir) throws IOException {
 		List<File> cdgFiles = listHadoopOutputFile(outputDir);
 		if (cdgFiles.isEmpty()) {
 			return new ResponseMessage(ErrorCode.GENERATE_CDG_ERROR, "Hadoop generate CDG error.");
 		}
 
+		List<String> errorCDG = new ArrayList<String>();
 		for (File file : cdgFiles) {
 			if (file.getName().equals(HADOOP_SUCCESS)) {
 				continue;
@@ -242,13 +246,26 @@ public class ECGResources {
 			double paraLya = Double.parseDouble(params[1]);
 			double paraAll = Double.parseDouble(params[2]);
 			String cdgResults = diagnosis(paraFft, paraLya, paraAll);
-			CDG cdg = new CDG(testId, cdgData, cdgResults, paraFft, paraLya);
-			cdgDAO.insert(cdg);
+			try {
+				CDG cdg = new CDG(testId, cdgData, cdgResults, paraFft, paraLya);
+				cdgDAO.insert(cdg);
+			} catch (Exception e) {
+				errorCDG.add(file.getName());
+			}
 
 			reader.close();
 		}
+		
+		//清空Hadoop 输入文件夹和输出文件夹。
+		LOGGER.info("Cleaning the temp ECG files in {}.", inputDir);
+		FileOperations.clearDirectory(inputDir);
+		LOGGER.info("Cleaned the temp ECG files in {}.", inputDir);
+		LOGGER.info("Cleaning the temp CDG files in {}.", outputDir);
+		FileOperations.clearDirectory(outputDir);
+		LOGGER.info("Cleaned the temp CDG files in {}.", outputDir);
 
-		return new ResponseMessage(ErrorCode.SUCCESS, "Generated and stored the CDG.");
+		return new StoreCDGResponseMessage(errorCDG, ErrorCode.SUCCESS,
+				"Storing CDG files in" + outputDir + " finished.");
 	}
 
 	/**
@@ -306,6 +323,7 @@ public class ECGResources {
 
 	/**
 	 * 将对应输入目录中的ECG文件存进数据库中
+	 * 
 	 * @param inputDir
 	 * @return 无法存入数据库的ECG文件名
 	 * @throws IOException
@@ -314,17 +332,20 @@ public class ECGResources {
 		List<File> ecgFiles = FileOperations.listFile(inputDir);
 		List<String> errorEcg = new ArrayList<String>();
 		for (File file : ecgFiles) {
-			//fileNameStrings[0]是住院号，fileNameStrings[1]是测试号，fileNameStrings[2]是文件名后缀[如果有的话]。
+			// fileNameStrings[0]是住院号，fileNameStrings[1]是测试号，fileNameStrings[2]是文件名后缀[如果有的话]。
 			String[] fileNameStrings = file.getName().split("[_\\.]");
-			int patientId = patientsDAO.findId(fileNameStrings[0]); 
+			int patientId = patientsDAO.findId(fileNameStrings[0]);
 			String testId = fileNameStrings[1];
 			String ecgData = convertECGToJsonString(file);
 			String source = SOURCE;
-			
+
 			try {
 				ecgDAO.insert(new ECG(testId, patientId, ecgData, source));
-			}
-			catch (Exception e) {
+				Times times = timesDAO.findByPatientId(patientId);
+				int time = times.getTimes();
+				times.setTimes(time + 1);
+				timesDAO.update(times);
+			} catch (Exception e) {
 				errorEcg.add(file.getName());
 			}
 		}
@@ -333,7 +354,9 @@ public class ECGResources {
 
 	/**
 	 * ECG文件的格式为每行分别对应12导联的一个时刻的幅值，该函数将ECG文件转为javascript可解释的JSON格式
-	 * @param ecgFile ECG文件对象
+	 * 
+	 * @param ecgFile
+	 *            ECG文件对象
 	 * @return ECG数据JSON字符串
 	 * @throws IOException
 	 */

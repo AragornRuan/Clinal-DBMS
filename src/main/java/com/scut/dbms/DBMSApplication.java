@@ -25,6 +25,7 @@ import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.setup.Bootstrap;
+
 /**
  * Hello world!
  *
@@ -33,12 +34,12 @@ public class DBMSApplication extends Application<DBMSConfiguration> {
 	public static void main(String[] args) throws Exception {
 		new DBMSApplication().run(args);
 	}
-	
+
 	@Override
-    public void initialize(Bootstrap<DBMSConfiguration> bootstrap) {
+	public void initialize(Bootstrap<DBMSConfiguration> bootstrap) {
 		bootstrap.addBundle(new AssetsBundle("/assets/", "/", "index.html"));
 	}
-	
+
 	@Override
 	public void run(DBMSConfiguration configuration, Environment environment) throws Exception {
 		final DBIFactory factory = new DBIFactory();
@@ -51,11 +52,11 @@ public class DBMSApplication extends Application<DBMSConfiguration> {
 		final CDGInfoDAO cdgInfoDAO = jdbi.onDemand(CDGInfoDAO.class);
 		final TimesDAO timesDAO = jdbi.onDemand(TimesDAO.class);
 		final DiagnosisDAO diagnosisDAO = jdbi.onDemand(DiagnosisDAO.class);
-environment.jersey().register(MultiPartFeature.class);
+		environment.jersey().register(MultiPartFeature.class);
 		environment.jersey().register(new PatientsResources(patientsDAO, timesDAO));
 		environment.jersey().register(new CasesResources(casesDAO, patientsDAO));
 		environment.jersey().register(new PatientsInfoResources(patientsInfoDAO));
-		environment.jersey().register(new ECGResources(ecgDAO, cdgDAO, patientsDAO));
+		environment.jersey().register(new ECGResources(ecgDAO, cdgDAO, patientsDAO, timesDAO));
 		environment.jersey().register(new CDGResources(cdgDAO));
 		environment.jersey().register(new CDGInfoResources(cdgInfoDAO, patientsDAO));
 		environment.jersey().register(new DiagnosisResources(diagnosisDAO));

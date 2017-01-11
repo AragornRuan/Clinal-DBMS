@@ -176,13 +176,20 @@ public class FileOperations {
 		if (file.exists()) {
 			if (file.delete()) {
 				LOGGER.info("Delete file {} successfully.", filePath);
-			}
-			else {
+			} else {
 				LOGGER.error("Delete file {} failed.", filePath);
 			}
-		}
-		else {
+		} else {
 			LOGGER.error("File {} is not exists.", filePath);
+		}
+	}
+
+	public static void clearDirectory(String directory) {
+		List<File> files = listFile(directory);
+		for (File file : files) {
+			if (!file.delete()) {
+				LOGGER.error("Delete temp file {} failed.", file.getName());
+			}
 		}
 	}
 }
