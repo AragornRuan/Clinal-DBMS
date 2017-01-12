@@ -62,6 +62,11 @@ $(document).ready(function() {
             "dataType": "json",
 
             "success": function(data) {
+                if (data.code == 7) {
+                    alert(data.message);
+                    $("#add").css("cursor", "pointer");
+                    return;
+                };
                 var casesData = {
                     "patientId": data.id,
                     "diagnosis": $("#diagnosis").val(),

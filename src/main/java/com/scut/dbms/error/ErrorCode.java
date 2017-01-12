@@ -16,4 +16,6 @@ public class ErrorCode {
 	
 	public static final int STORE_ECG_ERROR = 6;
 	
+	public static final int PATIENT_EXIST_ERROR = 7;
+	
 }

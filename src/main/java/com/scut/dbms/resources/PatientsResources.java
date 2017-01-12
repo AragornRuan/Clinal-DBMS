@@ -26,57 +26,68 @@ import java.util.List;
 
 @Path("/patients")
 @Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON+";charset=UTF-8")
+@Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
 public class PatientsResources {
-	
+
 	private final PatientsDAO patientsDAO;
 	private final TimesDAO timesDAO;
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(PatientsResources.class);
-	
+
 	public PatientsResources(PatientsDAO patientsDAO, TimesDAO timesDAO) {
 		this.patientsDAO = patientsDAO;
 		this.timesDAO = timesDAO;
 	}
-	
+
 	@GET
 	@Path("/id")
 	public Patients findById(@QueryParam("id") int id) {
 		return patientsDAO.findById(id);
 	}
-	
+
 	@GET
 	@Path("/id/range")
 	public List<Patients> findById(@QueryParam("min") int min, @QueryParam("max") int max) {
 		return patientsDAO.findById(min, max);
 	}
-	
+
 	@GET
 	public List<Patients> findAll() {
 		LOGGER.info("Thread id is {}", Thread.currentThread().getId());
 		return patientsDAO.findAll();
 	}
-	
+
 	@GET
 	@Path("/adnum")
 	public Patients findByAdmissionnumber(@QueryParam("admissionnumber") String admissionnumber) {
+		Patients p = patientsDAO.findByAdmissionnumber(admissionnumber);
+		if (p == null) {
+			LOGGER.info("patients is not exist.");
+		}
 		return patientsDAO.findByAdmissionnumber(admissionnumber);
 	}
-	
+
 	/**
 	 * 插入数据到patients表中
+	 * 
 	 * @param patients
 	 * @return 成功返回1，失败返回0
 	 */
 	@POST
 	@Path("/insert")
 	public ResponseMessage insert(@NotNull @Valid Patients patients) {
-		patientsDAO.insert(patients);
-		int id = patientsDAO.findId(patients.getAdmissionnumber());
-		timesDAO.insert(new Times(id, 0));
-		return new InsertResponseMessage(id, ErrorCode.SUCCESS, "Insert data into patients success."); 
+		Patients p = patientsDAO.findByAdmissionnumber(patients.getAdmissionnumber());
+		if (p == null) {
+			patientsDAO.insert(patients);
+			int id = patientsDAO.findId(patients.getAdmissionnumber());
+			timesDAO.insert(new Times(id, 0));
+			return new InsertResponseMessage(id, ErrorCode.SUCCESS, "Insert data into patients success.");
+		}
+		else {
+			return new ResponseMessage(ErrorCode.PATIENT_EXIST_ERROR, "Paient " + patients.getAdmissionnumber() + " exists.");
+		}
 	}
-	
+
 	@POST
 	@Path("/update")
 	public ResponseMessage update(@NotNull @Valid Patients patients, @QueryParam("id") int id) {
