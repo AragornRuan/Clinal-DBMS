@@ -219,6 +219,7 @@ public class ECGResources {
 		}
 
 		List<String> errorCDG = new ArrayList<String>();
+		List<String> cdgArray = new ArrayList<String>();
 		for (File file : cdgFiles) {
 			if (file.getName().equals(HADOOP_SUCCESS)) {
 				continue;
@@ -249,6 +250,7 @@ public class ECGResources {
 			try {
 				CDG cdg = new CDG(testId, cdgData, cdgResults, paraFft, paraLya);
 				cdgDAO.insert(cdg);
+				cdgArray.add(cdgData);
 			} catch (Exception e) {
 				errorCDG.add(file.getName());
 			}
@@ -264,7 +266,7 @@ public class ECGResources {
 		FileOperations.clearDirectory(outputDir);
 		LOGGER.info("Cleaned the temp CDG files in {}.", outputDir);
 
-		return new StoreCDGResponseMessage(errorCDG, ErrorCode.SUCCESS,
+		return new StoreCDGResponseMessage(errorCDG, cdgArray, ErrorCode.SUCCESS,
 				"Storing CDG files in" + outputDir + " finished.");
 	}
 
@@ -380,14 +382,16 @@ public class ECGResources {
 				ecgLeads.get(i).append(leads[i]).append(COMMA);
 			}
 		}
-
+		
 		ecgJson.append("[");
 		for (int i = 0; i < ECG_LEADS_SIZE; i++) {
 			ecgLeads.get(i).deleteCharAt(ecgLeads.get(i).length() - 1).append("]");
 			ecgJson.append(ecgLeads.get(i)).append(COMMA);
 		}
 		ecgJson.deleteCharAt(ecgJson.length() - 1).append("]");
-
+	
+		reader.close();
+		
 		return ecgJson.toString();
 	}
 }

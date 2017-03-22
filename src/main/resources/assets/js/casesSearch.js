@@ -171,6 +171,8 @@ $(document).ready(function() {
                 "success": function(data) {
                     $(".cdgInfo").css("cursor", "default");
                     var cdgData = JSON.parse(data.cdgData);
+
+                    //plotly.js画图
                     Plotly.purge(document.getElementById("graphCDG"));
                     Plotly.plot("graphCDG", [{
                         type: "scatter3d",
@@ -187,6 +189,26 @@ $(document).ready(function() {
                         height: 640
                     });
 
+                    //vis.js画图
+/*                    var data = new vis.DataSet();
+                    for (var i = 0; i < cdgData[0].length; i++) {
+                        data.add({x: cdgData[0][i], y: cdgData[1][i], z: cdgData[2][i]});
+                    }
+                    var options = {
+                        width: '500px',
+                        height: '500px',
+                        style: 'line',
+                        showAnimationControls: false,
+                        showGrid: true,
+                        showPerspective: false,
+                        showShadow: true,
+                        keepAspectRatio: true,
+                        verticalRatio: '1.0',
+                        xLabel: 'x',
+                        yLabel: 'y',
+                        zLabel: 'z'
+                    };
+                    var graph = new vis.Graph3d(document.getElementById('graphCDG'), data, options);*/
                     $("#CDGData").modal("show");
                 }
 
@@ -294,7 +316,7 @@ $(document).ready(function() {
         document.getElementById("ecgUnusual").checked = false;
         document.getElementById("ctNormal").checked = false;
         document.getElementById("ctStricture").checked = false;
-        document.getElementById("ctNothing").checked  = false;
+        document.getElementById("ctNothing").checked = false;
         document.getElementById("radiographyNormal").checked = false;
         document.getElementById("radiographyStricture").checked = false;
         document.getElementById("radiographyNothing").checked = false;
