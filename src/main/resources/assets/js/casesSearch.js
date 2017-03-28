@@ -149,7 +149,8 @@ $(document).ready(function() {
                     { "className": "testId" },
                     { "className": "cdgResults" },
                     { "className": "ecgResults" },
-                    { "className": "cdgDownload"}
+                    { "className": "cdgDownload"},
+                    { "className": "ecgDownload"}
                 ]
 
             });
@@ -216,7 +217,7 @@ $(document).ready(function() {
             });
         });
 
-        //下载CDG数据，使用FileSaver.js插件
+        //下载CDG数据，使用FileSaver.js插件，CDG文件的格式是txt格式，每一维数据一行
         $(".cdgInfo tbody").on("click", "td.cdgDownload",function() {
             var cdgInfoTable = $(".cdgInfo").DataTable();
             var tr = $(this).closest("tr");
@@ -226,9 +227,28 @@ $(document).ready(function() {
                 "type": "GET",
                 "data": {"testId": cdgInfoTableRow.data()[0] },
                 "dataType": "json",
+                "success": function(data) {         
+                    var cdgData = JSON.parse(data.cdgData);
+                    var blob = new Blob([cdgData[0], '\r\n', cdgData[1], '\r\n', cdgData[2], '\r\n'], {type: "text/plain;charset=utf-8"});
+                    var filename = 'CDG_' + patientsDataTableRow.data().admissionnumber + '_' + cdgInfoTableRow.data()[0];
+                    saveAs(blob, filename);
+                }
+            });      
+        });
+
+        //下载ECG数据，使用FileSaver.js插件
+        $(".cdgInfo tbody").on("click", "td.ecgDownload",function() {
+            var cdgInfoTable = $(".cdgInfo").DataTable();
+            var tr = $(this).closest("tr");
+            var cdgInfoTableRow = cdgInfoTable.row(tr);
+            $.ajax({
+                "url": "api/ecg",
+                "type": "GET",
+                "data": {"testId": cdgInfoTableRow.data()[0] },
+                "dataType": "json",
                 "success": function(data) {              
-                    var blob = new Blob([data.cdgData], {type: "text/plain;charset=utf-8"});
-                    var filename = patientsDataTableRow.data().admissionnumber + '_' + cdgInfoTableRow.data()[0];
+                    var blob = new Blob([data.ecgData], {type: "text/plain;charset=utf-8"});
+                    var filename = 'ECG_' + patientsDataTableRow.data().admissionnumber + '_' + cdgInfoTableRow.data()[0];
                     saveAs(blob, filename);
                 }
             });      
@@ -368,6 +388,7 @@ function generateCdgInfoTable(cdgInfo) {
             '<td>' + cdgInfo[i].cdgResults + '</td>' +
             '<td>' + (cdgInfo[i].ecgTag == 1 ? '大致正常' : '可见异常') + '</td>' +
             '<td>' + '<a class="btn btn-success">下载</a>' + '</td>' +
+            '<td>' + '<a class="btn btn-success">下载</a>' + '</td>'
             '</tr>';
     }
 
@@ -379,6 +400,7 @@ function generateCdgInfoTable(cdgInfo) {
         '<th> CDG结果 </th>' +
         '<th> ECG结果 </th>' +
         '<th> CDG下载 </th>' +
+        '<th> ECG下载 </th>' +
         '</thead>' +
         '<tbody>' +
         cdgInfoData +
