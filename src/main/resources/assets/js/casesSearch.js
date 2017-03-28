@@ -118,7 +118,7 @@ $(document).ready(function() {
 
         var patientsDataTable = $("#patientsData").DataTable();
         var tr = $(this).closest("tr");
-        var row = patientsDataTable.row(tr);
+        var patientsDataTableRow = patientsDataTable.row(tr);
 
         var cdgInfo = {};
         $.ajax({
@@ -126,7 +126,7 @@ $(document).ready(function() {
             "type": "GET",
             //关闭异步，确保获得数据后才能执行子表查看。
             "async": false,
-            "data": { "admissionnumber": row.data().admissionnumber },
+            "data": { "admissionnumber": patientsDataTableRow.data().admissionnumber },
             "dataType": "json",
 
             "success": function(data) {
@@ -134,11 +134,11 @@ $(document).ready(function() {
             }
         });
 
-        if (row.child.isShown()) {
-            row.child.hide();
+        if (patientsDataTableRow.child.isShown()) {
+            patientsDataTableRow.child.hide();
             tr.removeClass("shown");
         } else {
-            row.child(generateCdgInfoTable(cdgInfo)).show();
+            patientsDataTableRow.child(generateCdgInfoTable(cdgInfo)).show();
             tr.addClass("shown");
 
             var cdgInfoTable = $(".cdgInfo").DataTable({
@@ -148,7 +148,8 @@ $(document).ready(function() {
                 columns: [
                     { "className": "testId" },
                     { "className": "cdgResults" },
-                    { "className": "ecgResults" }
+                    { "className": "ecgResults" },
+                    { "className": "cdgDownload"}
                 ]
 
             });
@@ -160,12 +161,12 @@ $(document).ready(function() {
             $(this).css("cursor", "wait");
             var cdgInfoTable = $(".cdgInfo").DataTable();
             var tr = $(this).closest("tr");
-            var row = cdgInfoTable.row(tr);
+            var cdgInfoTableRow = cdgInfoTable.row(tr);
 
             $.ajax({
                 "url": "api/cdg",
                 "type": "GET",
-                "data": { "testId": row.data()[0] }, //tr.children()[0].textContent
+                "data": { "testId": cdgInfoTableRow.data()[0] }, //tr.children()[0].textContent
                 "dataType": "json",
 
                 "success": function(data) {
@@ -215,17 +216,35 @@ $(document).ready(function() {
             });
         });
 
+        //下载CDG数据，使用FileSaver.js插件
+        $(".cdgInfo tbody").on("click", "td.cdgDownload",function() {
+            var cdgInfoTable = $(".cdgInfo").DataTable();
+            var tr = $(this).closest("tr");
+            var cdgInfoTableRow = cdgInfoTable.row(tr);
+            $.ajax({
+                "url": "api/cdg",
+                "type": "GET",
+                "data": {"testId": cdgInfoTableRow.data()[0] },
+                "dataType": "json",
+                "success": function(data) {              
+                    var blob = new Blob([data.cdgData], {type: "text/plain;charset=utf-8"});
+                    var filename = patientsDataTableRow.data().admissionnumber + '_' + cdgInfoTableRow.data()[0];
+                    saveAs(blob, filename);
+                }
+            });      
+        });
+
         //获取ECG数据
         $(".cdgInfo tbody").on("click", "td.ecgResults", function() {
             $(this).css("cursor", "wait");
             var cdgInfoTable = $(".cdgInfo").DataTable();
             var tr = $(this).closest("tr");
-            var row = cdgInfoTable.row(tr);
+            var cdgInfoTableRow = cdgInfoTable.row(tr);
 
             $.ajax({
                 "url": "api/ecg",
                 "type": "GET",
-                "data": { "testId": row.data()[0] }, //tr.children()[0].textContent
+                "data": { "testId": cdgInfoTableRow.data()[0] }, //tr.children()[0].textContent
                 "dataType": "json",
 
                 "success": function(data) {
@@ -348,6 +367,7 @@ function generateCdgInfoTable(cdgInfo) {
             '<td>' + cdgInfo[i].testId + '</td>' +
             '<td>' + cdgInfo[i].cdgResults + '</td>' +
             '<td>' + (cdgInfo[i].ecgTag == 1 ? '大致正常' : '可见异常') + '</td>' +
+            '<td>' + '<a class="btn btn-success">下载</a>' + '</td>' +
             '</tr>';
     }
 
@@ -358,6 +378,7 @@ function generateCdgInfoTable(cdgInfo) {
         '<th> 测试号 </th>' +
         '<th> CDG结果 </th>' +
         '<th> ECG结果 </th>' +
+        '<th> CDG下载 </th>' +
         '</thead>' +
         '<tbody>' +
         cdgInfoData +

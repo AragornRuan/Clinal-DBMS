@@ -18,7 +18,7 @@ $(document).ready(function() {
         var ctStricture = document.getElementById("ctStricture").checked;
         var radiographyNothing = document.getElementById("radiographyNothing").checked;
         var radiographyNormal = document.getElementById("radiographyNormal").checked;
-        var ctStricture = document.getElementById("radiographyStricture").checked;
+        var radiographyStricture = document.getElementById("radiographyStricture").checked;
 
         if (admissionnumber.length != 6) {
             alert("请输入6位住院号!");
