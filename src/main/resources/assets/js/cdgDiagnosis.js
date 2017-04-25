@@ -1,19 +1,25 @@
 $(document).ready(function() {
-
+    //上传ECG文件，使用FileUpload插件，详细用法参见FileUpload官网介绍
     $('#filesupload').fileupload({
+            //调用的API为ECGResoureces类中的uploadFile函数
             url: '/api/ecg/upload',
             dataType: 'json',
+            //上传成功的回调函数
             done: function(e, data) {
+                //错误码为0代表上传成功
                 if (data.result.code == 0) {
 
                     $("#progress_str").text("上传成功！");
 
+                    //点击诊断按钮的回调函数，只有在上传成功后才能被触发
                     $("#diagnosis").on("click", function() {
-
+                        
+                        //显示诊断中的html样式
                         $("#cdgDiagnosisText").text("CDG诊断中...");
                         $("#loadingGif").css("display", "inline");
                         $("#diagnosis_str").text("");
-
+                        
+                        //调用的API为ECGResoureces类中的hadoop函数
                         $.ajax({
                             "url": "api/ecg/hadoop",
                             "type": "GET",
@@ -63,6 +69,7 @@ $(document).ready(function() {
             fail: function(e, data) {
                 $("#progress_str").text("上传失败!");
             },
+            //显示进度条
             progressall: function(e, data) {
                 var progress = parseInt(data.loaded / data.total * 100, 10);
                 $('#progress .progress-bar').css(

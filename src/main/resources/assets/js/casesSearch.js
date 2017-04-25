@@ -5,6 +5,7 @@ $(document).ready(function() {
      * @type {Object}
      */
     $('#patientsData').DataTable({
+        //将表格中的语言设置为中文
         language: {
             "sProcessing": "<img src='../images/ajax-loader.gif'>",
             "sLengthMenu": "显示 _MENU_ 项结果",
@@ -29,8 +30,9 @@ $(document).ready(function() {
                 "sSortDescending": ": 以降序排列此列"
             }
         },
-
+        //为每一列设置数据和列名
         columns: [{
+            //第一列为加号，点击加号显示CDG诊断信息
             "className": 'details-control',
             "orderable": false,
             "data": null,
@@ -63,7 +65,9 @@ $(document).ready(function() {
      * @return {[type]}
      */
     $("#search").on("click", function() {
+        //点击按钮后鼠标变等待样式
         $(this).css("cursor", "wait");
+        //获取筛选条件值
         var params = {
             "name": $("#name").val(),
             "male": (document.getElementById("male").checked ? 1 : 0),
@@ -89,7 +93,7 @@ $(document).ready(function() {
         };
 
         /**
-         * 异步获取病人信息，并填充表格
+         * 异步获取病人信息，并填充表格。调用的API是PatientsInfoResources类中的queryPatientsInfo函数
          * @param  {[type]}
          * @return {[type]}
          */
@@ -99,7 +103,9 @@ $(document).ready(function() {
             "data": params,
             "dataType": "json",
             "success": function(data) {
+                //获取数据成功后恢复鼠标样式
                 $("#search").css("cursor", "pointer");
+
                 var patientsDataTable = $("#patientsData").DataTable();
                 //先清空表格再填充。
                 patientsDataTable.clear();
@@ -112,7 +118,7 @@ $(document).ready(function() {
     });
 
     /**
-     * 查看测试号与CDG诊断结果的事件。
+     * 查看测试号与CDG诊断结果的事件，点击表格第一列的加号触发函数。
      */
     $("#patientsData tbody").on("click", "td.details-control", function() {
 
@@ -133,11 +139,13 @@ $(document).ready(function() {
                 cdgInfo = data;
             }
         });
-
+        
+        //子表显示在DataTables官方文档中有介绍.
         if (patientsDataTableRow.child.isShown()) {
             patientsDataTableRow.child.hide();
             tr.removeClass("shown");
         } else {
+            //generateCdgInfoTable函数产生子表的HTML代码，在文件最后有定义
             patientsDataTableRow.child(generateCdgInfoTable(cdgInfo)).show();
             tr.addClass("shown");
 
@@ -161,13 +169,16 @@ $(document).ready(function() {
         $(".cdgInfo tbody").on("click", "td.cdgResults", function() {
             $(this).css("cursor", "wait");
             var cdgInfoTable = $(".cdgInfo").DataTable();
+
+            //获取鼠标点击所在行的数据
             var tr = $(this).closest("tr");
             var cdgInfoTableRow = cdgInfoTable.row(tr);
-
+            
+            //获取cdg数据，调用的是CDGResources类中的findByTestId函数
             $.ajax({
                 "url": "api/cdg",
                 "type": "GET",
-                "data": { "testId": cdgInfoTableRow.data()[0] }, //tr.children()[0].textContent
+                "data": { "testId": cdgInfoTableRow.data()[0] }, 
                 "dataType": "json",
 
                 "success": function(data) {
@@ -191,26 +202,6 @@ $(document).ready(function() {
                         height: 640
                     });
 
-                    //vis.js画图
-/*                    var data = new vis.DataSet();
-                    for (var i = 0; i < cdgData[0].length; i++) {
-                        data.add({x: cdgData[0][i], y: cdgData[1][i], z: cdgData[2][i]});
-                    }
-                    var options = {
-                        width: '500px',
-                        height: '500px',
-                        style: 'line',
-                        showAnimationControls: false,
-                        showGrid: true,
-                        showPerspective: false,
-                        showShadow: true,
-                        keepAspectRatio: true,
-                        verticalRatio: '1.0',
-                        xLabel: 'x',
-                        yLabel: 'y',
-                        zLabel: 'z'
-                    };
-                    var graph = new vis.Graph3d(document.getElementById('graphCDG'), data, options);*/
                     $("#CDGData").modal("show");
                 }
 
@@ -222,6 +213,7 @@ $(document).ready(function() {
             var cdgInfoTable = $(".cdgInfo").DataTable();
             var tr = $(this).closest("tr");
             var cdgInfoTableRow = cdgInfoTable.row(tr);
+            //获取cdg数据，调用的是CDGResources类中的findByTestId函数
             $.ajax({
                 "url": "api/cdg",
                 "type": "GET",
@@ -229,6 +221,7 @@ $(document).ready(function() {
                 "dataType": "json",
                 "success": function(data) {         
                     var cdgData = JSON.parse(data.cdgData);
+                    //FileSaver.js插件使用方法，网上有介绍
                     var blob = new Blob([cdgData[0], '\r\n', cdgData[1], '\r\n', cdgData[2], '\r\n'], {type: "text/plain;charset=utf-8"});
                     var filename = 'CDG_' + patientsDataTableRow.data().admissionnumber + '_' + cdgInfoTableRow.data()[0];
                     saveAs(blob, filename);
@@ -241,6 +234,7 @@ $(document).ready(function() {
             var cdgInfoTable = $(".cdgInfo").DataTable();
             var tr = $(this).closest("tr");
             var cdgInfoTableRow = cdgInfoTable.row(tr);
+            //获取ecg数据，调用的是ECGResources类中的findByTestId函数
             $.ajax({
                 "url": "api/ecg",
                 "type": "GET",
@@ -254,6 +248,7 @@ $(document).ready(function() {
             });      
         });
 
+/*
         //获取ECG数据
         $(".cdgInfo tbody").on("click", "td.ecgResults", function() {
             $(this).css("cursor", "wait");
@@ -290,6 +285,7 @@ $(document).ready(function() {
 
             });
         });
+*/
 
         /**
          *  鼠标移动到CDGResults和ECGResults的单元格时改变样式
@@ -325,7 +321,7 @@ $(document).ready(function() {
         var patientsDataTable = $("#patientsData").DataTable();
         var tr = $(this).closest("tr");
         var row = patientsDataTable.row(tr);
-
+        //获取病历信息，调用的API是CasesResources类中的findByAdnum函数
         $.ajax({
             "url": "api/cases/adnum",
             "type": "GET",
@@ -333,6 +329,7 @@ $(document).ready(function() {
             "dataType": "json",
 
             "success": function(data) {
+                //填充病历显示窗口，并显示
                 $(".content").css("cursor", "default");
                 $("#caseTitle").text(row.data().name + "的病历");
                 $("#complaintCase").text(data.complaint);

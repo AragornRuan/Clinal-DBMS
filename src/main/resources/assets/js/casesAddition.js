@@ -1,5 +1,6 @@
 $(document).ready(function() {
-    //初始化时间选择器
+
+    //初始化amazeui datetimepicker时间选择器
     $(".time").datetimepicker({
         format: "yyyy-mm-dd",
         minView: 2,
@@ -7,9 +8,11 @@ $(document).ready(function() {
         todayBtn: true
     })
 
+    //点击添加按钮的回调函数
     $("#add").on("click", function() {
         $(this).css("cursor", "wait");
-
+        
+        //获取病历信息
         var admissionnumber = $("#admissionnumber").val();
         var ecgNormal = document.getElementById("ecgNormal").checked;
         var ecgUnusual = document.getElementById("ecgUnusual").checked;
@@ -20,6 +23,7 @@ $(document).ready(function() {
         var radiographyNormal = document.getElementById("radiographyNormal").checked;
         var radiographyStricture = document.getElementById("radiographyStricture").checked;
 
+        //填写内容错误时弹出警告
         if (admissionnumber.length != 6) {
             alert("请输入6位住院号!");
             $("#add").css("cursor", "pointer");
@@ -48,9 +52,9 @@ $(document).ready(function() {
             "age": $("#age").val(),
             "admissionnumber": admissionnumber
         };
-
+        //将病人的基本信息插入patients表，调用API为PatientsResources类中的insert函数
         $.ajax({
-            //添加header，并设置以下属性，否则服务端不支持Media Type
+            //添加header，并设置以下属性，否则服务端出现不支持Media Type错误
             "headers": {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -60,8 +64,10 @@ $(document).ready(function() {
             //要将JSON object转成string形式，否则服务端无法处理JSON
             "data": JSON.stringify(patientsData),
             "dataType": "json",
-
+            
+            //插入patients表成功后再将其余信息插入cases表
             "success": function(data) {
+                //如果插入失败则显示失败信息，错误码7代表病人已经存在，错误码的定义详见后端程序的ErrorCode类中。
                 if (data.code == 7) {
                     alert(data.message);
                     $("#add").css("cursor", "pointer");
@@ -84,6 +90,7 @@ $(document).ready(function() {
                     "remarks": $("#remarks").val(),
                     "disease": $("#disease").val()
                 };
+                //向cases表中插入数据，调用的API是CasesResources类中的insert函数
                 $.ajax({
                     "headers": {
                         'Accept': 'application/json',
@@ -97,6 +104,7 @@ $(document).ready(function() {
                         $("#add").css("cursor", "pointer");
                         alert("添加病历成功！");
                     },
+                    //处理请求错误情况
                     "error": function(jqXHR, exception) {
                         $("#add").css("cursor", "pointer");
                         if (jqXHR.status === 0) {
@@ -138,7 +146,8 @@ $(document).ready(function() {
             }
         });
     });
-
+    
+    //重置则刷新页面
     $("#reset").on("click", function() {
         location.reload();
     });

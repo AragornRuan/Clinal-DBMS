@@ -17,6 +17,9 @@ import com.scut.dbms.core.Patients;
 import com.scut.dbms.db.CDGInfoDAO;
 import com.scut.dbms.db.PatientsDAO;
 
+/**
+ * 对应于存储过程cdgQuery的API，只用在Matlab客户端
+ */
 @Path("/cdgInfo")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
@@ -31,11 +34,13 @@ public class CDGInfoResources {
 		this.patientsDAO = patientsDAO;
 	}
 	
+	//根据patientId，调用cdgQeruy存储过程
 	@GET
 	public List<CDGInfo> queryCDGInfo(@QueryParam("patientId") int patientId) {
 		return cdgInfoDAO.queryCDGInfo(patientId);
 	}
 	
+	//根据住院号获取cdg表数据
 	@GET
 	@Path("/adnum")
 	public List<CDGInfo> queryCDGInfoByAdmissionnumber(@QueryParam("admissionnumber") String admissionnumber) {

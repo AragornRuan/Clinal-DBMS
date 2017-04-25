@@ -12,23 +12,29 @@ $(document).ready(function() {
      */
     $("#search").on("click", function() {
         $(this).css("cursor", "wait");
-
+        
+        //住院号必须为6位
         var admissionnumber = $("#admissionnumberSearch").val();
         if (admissionnumber.length != 6) {
             alert("请输入正确的住院号:六位数字");
             return;
         }
+        //查询病人是否存在，调用的API述PatientsResources类中的findByAdmissionnumber函数
         $.ajax({
             "url": "api/patients/adnum",
             "type": "GET",
             "data": { "admissionnumber": admissionnumber },
             "dataType": "json",
             "success": function(patients) {
+                //如果结果集为空，则警告并返回
                 if (patients === undefined) {
                     alert("无此病人信息");
                     return;
                 }
+
+                //否则在修改窗口中填充病人基本信息，setPatients函数在本文件后面有定义
                 setPatients(patients);
+                //根据病人id获取病历信息，调用的类是casesResources类中的findByPatientsId函数
                 $.ajax({
                     "url": "api/cases/patientId",
                     "type": "GET",
@@ -36,8 +42,10 @@ $(document).ready(function() {
                     "dataType": "json",
                     "success": function(cases) {
                         $("#search").css("cursor", "pointer");
+                        //在修改窗口中填充病人病历信息，setCases函数在后面有定义
                         setCases(cases);
                         $("#modification").modal("show");
+                        //根据paiemts和cases表中的id列，更新修改后的信息，函数在后面有定义
                         modifyCases(patients.id, cases.id);
                     },
                     "error": function(jqXHR, exception) {
@@ -130,6 +138,7 @@ function setCases(cases) {
 
 //根据paiemts和cases表中的id列，更新修改后的信息
 function modifyCases(patientId, caseId) {
+    //点击修改按钮回调函数
     $("#modify").on("click", function() {
     	//改变鼠标样式为等待
         $(this).css("cursor", "wait");
@@ -172,7 +181,7 @@ function modifyCases(patientId, caseId) {
             "age": $("#age").val(),
             "admissionnumber": admissionnumber
         };
-
+        //将病人基本信息插入patients表
         $.ajax({
             //添加header，并设置以下属性，否则服务端不支持Media Type
             "headers": {
@@ -203,6 +212,7 @@ function modifyCases(patientId, caseId) {
                     "remarks": $("#remarks").val(),
                     "disease": $("#disease").val()
                 };
+                //将病历信息插入cases表，调用的API是casesResources类中的insert函数
                 $.ajax({
                     "headers": {
                         'Accept': 'application/json',

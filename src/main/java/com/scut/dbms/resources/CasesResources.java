@@ -30,17 +30,20 @@ public class CasesResources {
 		this.patientsDAO = patientsDAO;
 	}
 	
+	//获取所有cases表中的数据
 	@GET
 	public List<Cases> findAll() {
 		return casesDAO.findAll();
 	}
 	
+	//根据patientId获取cases表数据
 	@GET
 	@Path("/patientId")
 	public Cases findByPatientsId(@QueryParam("patientId") int patientsId) {
 		return casesDAO.findByPatientsId(patientsId);
 	}
 	
+	//根据住院号获取cases表数据
 	@GET
 	@Path("/adnum")
 	public Cases findByAdnum(@QueryParam("admissionnumber") String admissionnumber) {
@@ -48,6 +51,7 @@ public class CasesResources {
 		return casesDAO.findByPatientsId(patients.getId());
 	}
 	
+	//向cases表中插入数据
 	@POST
 	@Path("/insert")
 	public ResponseMessage insert(@NotNull @Valid Cases cases) {
@@ -55,10 +59,10 @@ public class CasesResources {
 		return new ResponseMessage(ErrorCode.SUCCESS, "insert into cases success.");
 	}
 	
+	//向cases表中更新数据
 	@POST
 	@Path("/update")
 	public ResponseMessage update(@NotNull @Valid Cases cases, @QueryParam("id") int id) {
-//		casesDAO.update(cases, id);
 		casesDAO.update(cases, id);
 		return new ResponseMessage(ErrorCode.SUCCESS, "update cases success.");
 	}

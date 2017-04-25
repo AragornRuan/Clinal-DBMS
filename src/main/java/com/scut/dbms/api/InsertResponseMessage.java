@@ -3,7 +3,7 @@ package com.scut.dbms.api;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class InsertResponseMessage extends ResponseMessage {
-
+    
 	private int id;
 	
 	public InsertResponseMessage(int id, int code, String message) {

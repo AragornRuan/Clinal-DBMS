@@ -12,6 +12,9 @@ import javax.ws.rs.core.MediaType;
 
 import java.util.List;
 
+/**
+ * 对应于patientInfoQuery存储过程的API
+ */
 @Path("/patientsinfo")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON+";charset=UTF-8")
@@ -22,6 +25,7 @@ public class PatientsInfoResources {
 		this.patientsInfoDAO = patientsInfoDAO;
 	}
 	
+	//调用存储过程patientInfoQuery
 	@GET
 	public List<PatientsInfo> queryPatientsInfo(@QueryParam("name") String name, @QueryParam("male") int male, @QueryParam("female") int female,
 			@QueryParam("admissionnumber") String addmissionnumber, @QueryParam("ecgNormal") int ecgNormal, 

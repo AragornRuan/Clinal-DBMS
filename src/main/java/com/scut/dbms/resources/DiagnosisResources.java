@@ -15,6 +15,9 @@ import org.slf4j.LoggerFactory;
 import com.scut.dbms.core.Diagnosis;
 import com.scut.dbms.db.DiagnosisDAO;
 
+/**
+ * 对应予diagnosis存储过程的API
+ */
 @Path("/diagnosis")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
@@ -27,6 +30,7 @@ public class DiagnosisResources {
 		this.diagnosisDAO = diagnosisDAO;
 	}
 	
+	//以住院号为数据参数，调用diagnosis存储过程，返回Diagnosis对象列表
 	@GET
 	public List<Diagnosis> queryDiagnosis(@QueryParam("admissionnumber") String admissionnumber) {
 		return diagnosisDAO.queryDiagnosis(admissionnumber);

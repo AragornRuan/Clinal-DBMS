@@ -39,24 +39,21 @@ public class PatientsResources {
 		this.timesDAO = timesDAO;
 	}
 
+    //根据id获取patients表数据
 	@GET
 	@Path("/id")
 	public Patients findById(@QueryParam("id") int id) {
 		return patientsDAO.findById(id);
 	}
 
-	@GET
-	@Path("/id/range")
-	public List<Patients> findById(@QueryParam("min") int min, @QueryParam("max") int max) {
-		return patientsDAO.findById(min, max);
-	}
-
+    //获取patients所有数据
 	@GET
 	public List<Patients> findAll() {
 		LOGGER.info("Thread id is {}", Thread.currentThread().getId());
 		return patientsDAO.findAll();
 	}
 
+    //根据住院号获取patients表数据
 	@GET
 	@Path("/adnum")
 	public Patients findByAdmissionnumber(@QueryParam("admissionnumber") String admissionnumber) {
@@ -88,6 +85,7 @@ public class PatientsResources {
 		}
 	}
 
+    //更新patients表数据
 	@POST
 	@Path("/update")
 	public ResponseMessage update(@NotNull @Valid Patients patients, @QueryParam("id") int id) {

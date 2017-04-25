@@ -31,11 +31,13 @@ public class CDGResources {
 		this.cdgDAO = cdgDAO;
 	}
 	
+	//根据testId获取cdg表数据
 	@GET
 	public CDG findByTestId(@QueryParam("testId") String testId) {
 		return cdgDAO.findByTestId(testId);
 	}
 	
+	//向cdg表中插入数据
 	@POST
 	@Path("/insert")
 	public ResponseMessage insert(@NotNull @Valid CDG cdg) {

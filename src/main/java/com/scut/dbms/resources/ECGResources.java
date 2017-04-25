@@ -71,11 +71,21 @@ public class ECGResources {
 		jedis = new Jedis(REDIS_HOST);
 	}
 
+/**
+ * 根据testId获取ecg表数据
+ * @param  testId [description]
+ * @return        [description]
+ */
 	@GET
 	public ECG findByTestId(@QueryParam("testId") String testId) {
 		return ecgDAO.findByTestId(testId);
 	}
 
+/**
+ * 将ECG数据插入ecg表
+ * @param  ecg [description]
+ * @return     [description]
+ */
 	@POST
 	@Path("/insert")
 	public ResponseMessage insert(@Valid @NotNull ECG ecg) {
@@ -149,23 +159,33 @@ public class ECGResources {
 		return new ResponseMessage(ErrorCode.SUCCESS, "Inserted ECG, generated CDG and inserted CDG.");
 	}
 
+/**
+ * 调用Hadoop进行CDG诊断API，根据threadId确定输入和输出文件夹
+ * @param  threadId             线程号，用于确定Hadoop的输入和输出文件夹
+ * @return                      [description]
+ * @throws IOException          [description]
+ * @throws InterruptedException [description]
+ */
 	@GET
 	@Path("/hadoop")
 	public ResponseMessage hadoop(@QueryParam("threadId") long threadId) throws IOException, InterruptedException {
 
 		String inputDir = FileConstants.HADOOP_INPUT_DIR + threadId;
 		String outputDir = FileConstants.HADOOP_OUTPUT_DIR + threadId;
-
+        
 		FileOperations.makeDir(outputDir);
-
+        
+        //创建调用Python脚本的Shell命令
 		StringBuilder runHadoop = new StringBuilder();
 		runHadoop.append("python cardio.py ").append(inputDir).append(" ").append(outputDir);
-
+        
+        //执行Shell命令，并等待程序运行完成
 		Process process = Runtime.getRuntime().exec(runHadoop.toString());
 		LOGGER.info("Generating CDG using Hadoop, input directory {}, output directory {}.", inputDir, outputDir);
 		process.waitFor();
 		LOGGER.info("Generated CDG using Hadoop, input directory {}, output directory {}.", inputDir, outputDir);
-
+        
+        //存储CDG及相关数据，storeCDG函数在后面有定义
 		LOGGER.info("Storing CDG data into MySQL..");
 		ResponseMessage response = storeCDG(inputDir, outputDir);
 		LOGGER.info("Stored CDG data into MySQL..");
@@ -174,12 +194,23 @@ public class ECGResources {
 
 	}
 
+    /**
+     * 为上传ECG文件注册API，需要MULTIPART_FORM_DATA格式的MediaType。
+     * @param  uploadedInputStream 文件内容
+     * @param  fileDetail          文件的细节，包含文件名等信息
+     * @return                     [description]
+     * @throws IOException         [description]
+     */
 	@POST
 	@Path("/upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public ResponseMessage uploadFile(@FormDataParam("files") InputStream uploadedInputStream,
 			@FormDataParam("files") FormDataContentDisposition fileDetail) throws IOException {
 
+        /**
+         * 为了在多线程的情况下避免Hadoop输入文件夹的冲突，每一个线程根据其线程号创建一个输入文件夹。ECG
+         * 再上传到此文件夹中作为Hadoop的输入文件夹。
+         */
 		String filename = fileDetail.getFileName();
 		long threadId = Thread.currentThread().getId();
 		String inputDir = FileConstants.HADOOP_INPUT_DIR + threadId + FileConstants.FILE_SEPARATOR;
@@ -221,6 +252,7 @@ public class ECGResources {
 		List<String> errorCDG = new ArrayList<String>();
 		List<String> cdgArray = new ArrayList<String>();
 		for (File file : cdgFiles) {
+			//Hadoop的输出文件中，如果成功则生成文件_SUCCESS，内容为空，因此跳过
 			if (file.getName().equals(HADOOP_SUCCESS)) {
 				continue;
 			}
@@ -356,7 +388,7 @@ public class ECGResources {
 
 	/**
 	 * ECG文件的格式为每行分别对应12导联的一个时刻的幅值，该函数将ECG文件转为javascript可解释的JSON格式
-	 * 
+	 * [[1],[2],...,[12]]
 	 * @param ecgFile
 	 *            ECG文件对象
 	 * @return ECG数据JSON字符串
