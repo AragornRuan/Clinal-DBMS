@@ -248,7 +248,7 @@ $(document).ready(function() {
             });      
         });
 
-/*
+
         //获取ECG数据
         $(".cdgInfo tbody").on("click", "td.ecgResults", function() {
             $(this).css("cursor", "wait");
@@ -280,12 +280,12 @@ $(document).ready(function() {
                     }], {
                         height: 640,
                     });
-                    //       $("#ECGData").modal("show");
+                    $("#ECGData").modal("show");
                 }
 
             });
         });
-*/
+
 
         /**
          *  鼠标移动到CDGResults和ECGResults的单元格时改变样式

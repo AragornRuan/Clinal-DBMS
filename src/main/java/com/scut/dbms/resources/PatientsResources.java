@@ -6,7 +6,11 @@ import com.scut.dbms.db.PatientsDAO;
 import com.scut.dbms.db.TimesDAO;
 import com.scut.dbms.api.ResponseMessage;
 import com.scut.dbms.api.UpdateResponseMessage;
+import com.scut.dbms.auth.DefaultJwtCookiePrincipal;
 import com.scut.dbms.error.ErrorCode;
+
+import io.dropwizard.auth.Auth;
+
 import com.scut.dbms.api.InsertResponseMessage;
 
 import javax.validation.Valid;
@@ -48,8 +52,7 @@ public class PatientsResources {
 
     //获取patients所有数据
 	@GET
-	public List<Patients> findAll() {
-		LOGGER.info("Thread id is {}", Thread.currentThread().getId());
+	public List<Patients> findAll(@Auth DefaultJwtCookiePrincipal principal) {
 		return patientsDAO.findAll();
 	}
 

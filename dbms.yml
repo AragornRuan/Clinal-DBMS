@@ -20,6 +20,13 @@ server:
 #Redis host
 #redisHost: localhost
 
+jwtCookieAuth:
+  secretSeed: null
+  secure: false
+  httpOnly: true
+  sessionExpiryVolatile: PT30m
+  sessionExpiryPersistent: P7d
+
 logging:
 
   # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.

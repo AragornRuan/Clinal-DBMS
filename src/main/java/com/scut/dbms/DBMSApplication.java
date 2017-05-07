@@ -1,9 +1,11 @@
 package com.scut.dbms;
 
+
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.skife.jdbi.v2.DBI;
 
 import com.scut.dbms.DBMSConfiguration;
+import com.scut.dbms.auth.JwtCookieAuthBundle;
 import com.scut.dbms.db.CDGDAO;
 import com.scut.dbms.db.CDGInfoDAO;
 import com.scut.dbms.db.CasesDAO;
@@ -11,7 +13,10 @@ import com.scut.dbms.db.DiagnosisDAO;
 import com.scut.dbms.db.PatientsDAO;
 import com.scut.dbms.db.PatientsInfoDAO;
 import com.scut.dbms.db.TimesDAO;
+import com.scut.dbms.db.UsersDAO;
 import com.scut.dbms.db.ECGDAO;
+import com.scut.dbms.db.InvitationDAO;
+import com.scut.dbms.resources.AuthResources;
 import com.scut.dbms.resources.CDGInfoResources;
 import com.scut.dbms.resources.CDGResources;
 import com.scut.dbms.resources.CasesResources;
@@ -38,6 +43,7 @@ public class DBMSApplication extends Application<DBMSConfiguration> {
 	@Override
 	public void initialize(Bootstrap<DBMSConfiguration> bootstrap) {
 		bootstrap.addBundle(new AssetsBundle("/assets/", "/", "index.html"));
+		bootstrap.addBundle(JwtCookieAuthBundle.getDefault());
 	}
 
 	@Override
@@ -52,6 +58,8 @@ public class DBMSApplication extends Application<DBMSConfiguration> {
 		final CDGInfoDAO cdgInfoDAO = jdbi.onDemand(CDGInfoDAO.class);
 		final TimesDAO timesDAO = jdbi.onDemand(TimesDAO.class);
 		final DiagnosisDAO diagnosisDAO = jdbi.onDemand(DiagnosisDAO.class);
+		final UsersDAO usersDAO = jdbi.onDemand(UsersDAO.class);
+		final InvitationDAO invitationDAO = jdbi.onDemand(InvitationDAO.class);
 		environment.jersey().register(MultiPartFeature.class);
 		environment.jersey().register(new PatientsResources(patientsDAO, timesDAO));
 		environment.jersey().register(new CasesResources(casesDAO, patientsDAO));
@@ -60,5 +68,6 @@ public class DBMSApplication extends Application<DBMSConfiguration> {
 		environment.jersey().register(new CDGResources(cdgDAO));
 		environment.jersey().register(new CDGInfoResources(cdgInfoDAO, patientsDAO));
 		environment.jersey().register(new DiagnosisResources(diagnosisDAO));
+		environment.jersey().register(new AuthResources(usersDAO, invitationDAO));
 	}
 }

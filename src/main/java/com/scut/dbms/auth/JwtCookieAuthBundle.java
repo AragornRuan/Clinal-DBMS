@@ -1,0 +1,147 @@
+package com.scut.dbms.auth;
+
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.google.common.hash.Hashing;
+import com.google.common.primitives.Ints;
+import io.dropwizard.Configuration;
+import io.dropwizard.ConfiguredBundle;
+import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.AuthValueFactoryProvider;
+import io.dropwizard.auth.Authorizer;
+import io.dropwizard.jersey.setup.JerseyEnvironment;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
+import io.jsonwebtoken.Claims;
+import static io.jsonwebtoken.SignatureAlgorithm.*;
+import io.jsonwebtoken.impl.DefaultClaims;
+import static java.nio.charset.StandardCharsets.*;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
+import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import javax.crypto.KeyGenerator;
+import javax.crypto.spec.SecretKeySpec;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
+
+/**
+ * Dopwizard bundle
+ * @param <C> Your application configuration class
+ * @param <P> the class of the principal that will be serialized in / deserialized from JWT cookies
+ */
+public class JwtCookieAuthBundle<C extends Configuration, P extends JwtCookiePrincipal> implements ConfiguredBundle<C>{
+
+    private static final String JWT_COOKIE_PREFIX = "jwtCookie";
+    private static final String DEFAULT_COOKIE_NAME = "sessionToken";
+
+    private final Class<P> principalType;
+    private final Function<P,Claims> serializer;
+    private final Function<Claims, P> deserializer;
+    private Function<C, JwtCookieAuthConfiguration> configurationSupplier;
+    private BiFunction<C, Environment, Key> keySuppplier;
+
+    /**
+     * Get a bundle instance that will use DefaultJwtCookiePrincipal
+     * @param <C> Your application configuration class
+     * @return a bundle instance that will use DefaultJwtCookiePrincipal
+     */
+    public static <C extends Configuration> JwtCookieAuthBundle<C, DefaultJwtCookiePrincipal> getDefault(){
+        return new JwtCookieAuthBundle<>(
+                DefaultJwtCookiePrincipal.class,
+                DefaultJwtCookiePrincipal::getClaims,
+                DefaultJwtCookiePrincipal::new);
+    }
+
+    /**
+     * Build a new instance of JwtCookieAuthBundle
+     * @param principalType the class of the principal that will be serialized in / deserialized from JWT cookies
+     * @param serializer a function to serialize principals into JWT claims
+     * @param deserializer a function to deserialize JWT claims into principals
+     */
+    public JwtCookieAuthBundle(Class<P> principalType, Function<P,Claims> serializer, Function<Claims, P> deserializer) {
+        this.principalType = principalType;
+        this.serializer = serializer;
+        this.deserializer = deserializer;
+        this.configurationSupplier = c -> new JwtCookieAuthConfiguration();
+    }
+
+    /**
+     * If you want to sign the JWT with your own key, specify it here
+     * @param keySupplier a bi-function which will return the signing key from the configuration and environment
+     * @return this
+     */
+    public JwtCookieAuthBundle<C, P> withKeyProvider(BiFunction<C, Environment, Key> keySupplier){
+        this.keySuppplier = keySupplier;
+        return this;
+    }
+
+    /**
+     * If you need to configure the bundle, specify it here
+     * @param configurationSupplier a bi-function which will return the bundle configuration from the application configuration
+     * @return this
+     */
+    public JwtCookieAuthBundle<C, P> withConfigurationSupplier(Function<C, JwtCookieAuthConfiguration> configurationSupplier) {
+        this.configurationSupplier = configurationSupplier;
+        return this;
+    }
+
+
+    @Override
+    public void initialize(Bootstrap<?> bootstrap) {
+        //in case somebody needs to serialize a DefaultJwtCookiePrincipal
+        bootstrap.getObjectMapper().registerModule(new SimpleModule().addAbstractTypeMapping(Claims.class, DefaultClaims.class));
+    }
+
+    @Override
+    public void run(C configuration, Environment environment) throws Exception {
+        JwtCookieAuthConfiguration conf = configurationSupplier.apply(configuration);
+
+        //build the key from the key factory if it was provided
+        Key key = Optional
+                .ofNullable(keySuppplier)
+                .map(k -> k.apply(configuration, environment))
+                .orElseGet(() -> generateKey(conf.getSecretSeed()));
+
+        JerseyEnvironment jerseyEnvironment = environment.jersey();
+
+        jerseyEnvironment.register(new AuthDynamicFeature(
+                new JwtCookieAuthRequestFilter.Builder()
+                .setCookieName(DEFAULT_COOKIE_NAME)
+                .setAuthenticator(new JwtCookiePrincipalAuthenticator(key, deserializer))
+                .setPrefix(JWT_COOKIE_PREFIX)
+                .setAuthorizer((Authorizer<P>)(P::isInRole))
+                .buildAuthFilter()));
+        jerseyEnvironment.register(new AuthValueFactoryProvider.Binder<>(principalType));
+        jerseyEnvironment.register(RolesAllowedDynamicFeature.class);
+
+        jerseyEnvironment.register(new JwtCookieAuthResponseFilter<>(
+                principalType,
+                serializer,
+                DEFAULT_COOKIE_NAME,
+                conf.isSecure(),
+                conf.isHttpOnly(),
+                key,
+                Ints.checkedCast(Duration.parse(conf.getSessionExpiryVolatile()).getSeconds()),
+                Ints.checkedCast(Duration.parse(conf.getSessionExpiryPersistent()).getSeconds())));
+
+        jerseyEnvironment.register(DontRefreshSessionFilter.class);
+    }
+
+    public static Key generateKey(String secretSeed) {
+        return //else make a key from the seed if it was provided
+        Optional.ofNullable(secretSeed)
+                .map(seed -> Hashing.sha256().newHasher().putString(seed, UTF_8).hash().asBytes())
+                .map(k -> (Key) new SecretKeySpec(k, HS256.getJcaName()))
+                //else generate a random key
+                .orElseGet(getHmacSha256KeyGenerator()::generateKey);
+    }
+
+    private static KeyGenerator getHmacSha256KeyGenerator(){
+        try{
+            return KeyGenerator.getInstance(HS256.getJcaName());
+        } catch(NoSuchAlgorithmException e){
+            throw new SecurityException(e);
+        }
+    }
+}
