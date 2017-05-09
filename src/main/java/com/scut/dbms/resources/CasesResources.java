@@ -5,7 +5,11 @@ import com.scut.dbms.core.Patients;
 import com.scut.dbms.db.CasesDAO;
 import com.scut.dbms.db.PatientsDAO;
 import com.scut.dbms.api.ResponseMessage;
+import com.scut.dbms.auth.DefaultJwtCookiePrincipal;
 import com.scut.dbms.error.ErrorCode;
+
+import io.dropwizard.auth.Auth;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -32,21 +36,21 @@ public class CasesResources {
 	
 	//获取所有cases表中的数据
 	@GET
-	public List<Cases> findAll() {
+	public List<Cases> findAll(@Auth DefaultJwtCookiePrincipal principal) {
 		return casesDAO.findAll();
 	}
 	
 	//根据patientId获取cases表数据
 	@GET
 	@Path("/patientId")
-	public Cases findByPatientsId(@QueryParam("patientId") int patientsId) {
+	public Cases findByPatientsId(@Auth DefaultJwtCookiePrincipal principal, @QueryParam("patientId") int patientsId) {
 		return casesDAO.findByPatientsId(patientsId);
 	}
 	
 	//根据住院号获取cases表数据
 	@GET
 	@Path("/adnum")
-	public Cases findByAdnum(@QueryParam("admissionnumber") String admissionnumber) {
+	public Cases findByAdnum(@Auth DefaultJwtCookiePrincipal principal, @QueryParam("admissionnumber") String admissionnumber) {
 		Patients patients = patientsDAO.findByAdmissionnumber(admissionnumber);
 		return casesDAO.findByPatientsId(patients.getId());
 	}
@@ -54,7 +58,7 @@ public class CasesResources {
 	//向cases表中插入数据
 	@POST
 	@Path("/insert")
-	public ResponseMessage insert(@NotNull @Valid Cases cases) {
+	public ResponseMessage insert(@Auth DefaultJwtCookiePrincipal principal, @NotNull @Valid Cases cases) {
 		casesDAO.insert(cases);
 		return new ResponseMessage(ErrorCode.SUCCESS, "insert into cases success.");
 	}
@@ -62,7 +66,7 @@ public class CasesResources {
 	//向cases表中更新数据
 	@POST
 	@Path("/update")
-	public ResponseMessage update(@NotNull @Valid Cases cases, @QueryParam("id") int id) {
+	public ResponseMessage update(@Auth DefaultJwtCookiePrincipal principal, @NotNull @Valid Cases cases, @QueryParam("id") int id) {
 		casesDAO.update(cases, id);
 		return new ResponseMessage(ErrorCode.SUCCESS, "update cases success.");
 	}

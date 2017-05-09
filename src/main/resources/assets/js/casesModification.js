@@ -12,7 +12,7 @@ $(document).ready(function() {
      */
     $("#search").on("click", function() {
         $(this).css("cursor", "wait");
-        
+
         //住院号必须为6位
         var admissionnumber = $("#admissionnumberSearch").val();
         if (admissionnumber.length != 6) {
@@ -52,16 +52,10 @@ $(document).ready(function() {
                         $("#search").css("cursor", "pointer");
                         if (jqXHR.status === 0) {
                             alert('Not connect.\n Verify Network.');
-                        } else if (jqXHR.status == 404) {
-                            alert('Requested page not found. [404]');
+                        } else if (jqXHR.status == 401) {
+                            $("#ModalLogin").modal("show");
                         } else if (jqXHR.status == 500) {
-                            alert('Internal Server Error [500].');
-                        } else if (exception === 'parsererror') {
-                            alert('Requested JSON parse failed.');
-                        } else if (exception === 'timeout') {
-                            alert('Time out error.');
-                        } else if (exception === 'abort') {
-                            alert('Ajax request aborted.');
+                            alert(jqXHR.responseJSON.message);
                         } else {
                             alert('Uncaught Error.\n' + jqXHR.responseText);
                         }
@@ -72,16 +66,10 @@ $(document).ready(function() {
                 $("#search").css("cursor", "pointer");
                 if (jqXHR.status === 0) {
                     alert('Not connect.\n Verify Network.');
-                } else if (jqXHR.status == 404) {
-                    alert('Requested page not found. [404]');
+                } else if (jqXHR.status == 401) {
+                    $("#ModalLogin").modal("show");
                 } else if (jqXHR.status == 500) {
-                    alert('Internal Server Error [500].');
-                } else if (exception === 'parsererror') {
-                    alert('Requested JSON parse failed.');
-                } else if (exception === 'timeout') {
-                    alert('Time out error.');
-                } else if (exception === 'abort') {
-                    alert('Ajax request aborted.');
+                    alert(jqXHR.responseJSON.message);
                 } else {
                     alert('Uncaught Error.\n' + jqXHR.responseText);
                 }
@@ -140,7 +128,7 @@ function setCases(cases) {
 function modifyCases(patientId, caseId) {
     //点击修改按钮回调函数
     $("#modify").on("click", function() {
-    	//改变鼠标样式为等待
+        //改变鼠标样式为等待
         $(this).css("cursor", "wait");
 
         var admissionnumber = $("#admissionnumber").val();
@@ -230,16 +218,10 @@ function modifyCases(patientId, caseId) {
                         $("#modify").css("cursor", "pointer");
                         if (jqXHR.status === 0) {
                             alert('Not connect.\n Verify Network.');
-                        } else if (jqXHR.status == 404) {
-                            alert('Requested page not found. [404]');
+                        } else if (jqXHR.status == 401) {
+                            $("#ModalLogin").modal("show");
                         } else if (jqXHR.status == 500) {
-                            alert('Internal Server Error [500].');
-                        } else if (exception === 'parsererror') {
-                            alert('Requested JSON parse failed.');
-                        } else if (exception === 'timeout') {
-                            alert('Time out error.');
-                        } else if (exception === 'abort') {
-                            alert('Ajax request aborted.');
+                            alert(jqXHR.responseJSON.message);
                         } else {
                             alert('Uncaught Error.\n' + jqXHR.responseText);
                         }
@@ -251,16 +233,10 @@ function modifyCases(patientId, caseId) {
                 $("#add").css("cursor", "pointer");
                 if (jqXHR.status === 0) {
                     alert('Not connect.\n Verify Network.');
-                } else if (jqXHR.status == 404) {
-                    alert('Requested page not found. [404]');
+                } else if (jqXHR.status == 401) {
+                    $("#ModalLogin").modal("show");
                 } else if (jqXHR.status == 500) {
-                    alert('Internal Server Error [500].');
-                } else if (exception === 'parsererror') {
-                    alert('Requested JSON parse failed.');
-                } else if (exception === 'timeout') {
-                    alert('Time out error.');
-                } else if (exception === 'abort') {
-                    alert('Ajax request aborted.');
+                    alert(jqXHR.responseJSON.message);
                 } else {
                     alert('Uncaught Error.\n' + jqXHR.responseText);
                 }

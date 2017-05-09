@@ -1,7 +1,10 @@
 package com.scut.dbms.resources;
 
+import com.scut.dbms.auth.DefaultJwtCookiePrincipal;
 import com.scut.dbms.core.PatientsInfo;
 import com.scut.dbms.db.PatientsInfoDAO;
+
+import io.dropwizard.auth.Auth;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -27,7 +30,7 @@ public class PatientsInfoResources {
 	
 	//调用存储过程patientInfoQuery
 	@GET
-	public List<PatientsInfo> queryPatientsInfo(@QueryParam("name") String name, @QueryParam("male") int male, @QueryParam("female") int female,
+	public List<PatientsInfo> queryPatientsInfo(@Auth DefaultJwtCookiePrincipal principal, @QueryParam("name") String name, @QueryParam("male") int male, @QueryParam("female") int female,
 			@QueryParam("admissionnumber") String addmissionnumber, @QueryParam("ecgNormal") int ecgNormal, 
 			@QueryParam("ecgUnusual") int ecgUnusual, @QueryParam("ctNormal") int ctNormal, @QueryParam("ctStricture") int ctStricture, 
 			@QueryParam("ctNothing") int ctNothing, @QueryParam("radiographyNormal") int radiographyNormal, 

@@ -13,12 +13,12 @@ $(document).ready(function() {
 
                     //点击诊断按钮的回调函数，只有在上传成功后才能被触发
                     $("#diagnosis").on("click", function() {
-                        
+
                         //显示诊断中的html样式
                         $("#cdgDiagnosisText").text("CDG诊断中...");
                         $("#loadingGif").css("display", "inline");
                         $("#diagnosis_str").text("");
-                        
+
                         //调用的API为ECGResoureces类中的hadoop函数
                         $.ajax({
                             "url": "api/ecg/hadoop",
@@ -44,16 +44,10 @@ $(document).ready(function() {
 
                                 if (jqXHR.status === 0) {
                                     alert('Not connect.\n Verify Network.');
-                                } else if (jqXHR.status == 404) {
-                                    alert('Requested page not found. [404]');
+                                } else if (jqXHR.status == 401) {
+                                    $("#ModalLogin").modal("show");
                                 } else if (jqXHR.status == 500) {
-                                    alert('Internal Server Error [500].');
-                                } else if (exception === 'parsererror') {
-                                    alert('Requested JSON parse failed.');
-                                } else if (exception === 'timeout') {
-                                    alert('Time out error.');
-                                } else if (exception === 'abort') {
-                                    alert('Ajax request aborted.');
+                                    alert(jqXHR.responseJSON.message);
                                 } else {
                                     alert('Uncaught Error.\n' + jqXHR.responseText);
                                 }
@@ -68,6 +62,21 @@ $(document).ready(function() {
             },
             fail: function(e, data) {
                 $("#progress_str").text("上传失败!");
+                $.ajax({
+                    "url": "api/auth/test",
+                    "type": "GET",
+                    "dataType": "json",
+
+                    "error": function(jqXHR, exception) {
+                        if (jqXHR.status === 0) {
+                            alert('Not connect.\n Verify Network.');
+                        } else if (jqXHR.status == 401) {
+                            $("#ModalLogin").modal("show");
+                        } else {
+                            alert('Uncaught Error.\n' + jqXHR.responseText);
+                        }
+                    }
+                });
             },
             //显示进度条
             progressall: function(e, data) {

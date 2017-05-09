@@ -113,6 +113,18 @@ $(document).ready(function() {
                     patientsDataTable.row.add(data[i]);
                 }
                 patientsDataTable.draw();
+            },
+            "error": function(jqXHR, exception) {
+                $("#search").css("cursor", "pointer");
+                if (jqXHR.status === 0) {
+                    alert('Not connect.\n Verify Network.');
+                } else if (jqXHR.status == 401) {
+                    $("#ModalLogin").modal("show");
+                } else if (jqXHR.status == 500) {
+                    alert(jqXHR.responseJSON.message);
+                } else {
+                    alert('Uncaught Error.\n' + jqXHR.responseText);
+                }
             }
         });
     });
@@ -137,9 +149,20 @@ $(document).ready(function() {
 
             "success": function(data) {
                 cdgInfo = data;
+            },
+            "error": function(jqXHR, exception) {
+                if (jqXHR.status === 0) {
+                    alert('Not connect.\n Verify Network.');
+                } else if (jqXHR.status == 401) {
+                    $("#ModalLogin").modal("show");
+                } else if (jqXHR.status == 500) {
+                    alert(jqXHR.responseJSON.message);
+                } else {
+                    alert('Uncaught Error.\n' + jqXHR.responseText);
+                }
             }
         });
-        
+
         //子表显示在DataTables官方文档中有介绍.
         if (patientsDataTableRow.child.isShown()) {
             patientsDataTableRow.child.hide();
@@ -157,8 +180,8 @@ $(document).ready(function() {
                     { "className": "testId" },
                     { "className": "cdgResults" },
                     { "className": "ecgResults" },
-                    { "className": "cdgDownload"},
-                    { "className": "ecgDownload"}
+                    { "className": "cdgDownload" },
+                    { "className": "ecgDownload" }
                 ]
 
             });
@@ -173,12 +196,12 @@ $(document).ready(function() {
             //获取鼠标点击所在行的数据
             var tr = $(this).closest("tr");
             var cdgInfoTableRow = cdgInfoTable.row(tr);
-            
+
             //获取cdg数据，调用的是CDGResources类中的findByTestId函数
             $.ajax({
                 "url": "api/cdg",
                 "type": "GET",
-                "data": { "testId": cdgInfoTableRow.data()[0] }, 
+                "data": { "testId": cdgInfoTableRow.data()[0] },
                 "dataType": "json",
 
                 "success": function(data) {
@@ -203,13 +226,25 @@ $(document).ready(function() {
                     });
 
                     $("#CDGData").modal("show");
+                },
+                "error": function(jqXHR, exception) {
+                    $(".cdgInfo").css("cursor", "default");
+                    if (jqXHR.status === 0) {
+                        alert('Not connect.\n Verify Network.');
+                    } else if (jqXHR.status == 401) {
+                        $("#ModalLogin").modal("show");
+                    } else if (jqXHR.status == 500) {
+                        alert(jqXHR.responseJSON.message);
+                    } else {
+                        alert('Uncaught Error.\n' + jqXHR.responseText);
+                    }
                 }
 
             });
         });
 
         //下载CDG数据，使用FileSaver.js插件，CDG文件的格式是txt格式，每一维数据一行
-        $(".cdgInfo tbody").on("click", "td.cdgDownload",function() {
+        $(".cdgInfo tbody").on("click", "td.cdgDownload", function() {
             var cdgInfoTable = $(".cdgInfo").DataTable();
             var tr = $(this).closest("tr");
             var cdgInfoTableRow = cdgInfoTable.row(tr);
@@ -217,20 +252,33 @@ $(document).ready(function() {
             $.ajax({
                 "url": "api/cdg",
                 "type": "GET",
-                "data": {"testId": cdgInfoTableRow.data()[0] },
+                "data": { "testId": cdgInfoTableRow.data()[0] },
                 "dataType": "json",
-                "success": function(data) {         
+                "success": function(data) {
                     var cdgData = JSON.parse(data.cdgData);
                     //FileSaver.js插件使用方法，网上有介绍
-                    var blob = new Blob([cdgData[0], '\r\n', cdgData[1], '\r\n', cdgData[2], '\r\n'], {type: "text/plain;charset=utf-8"});
+                    var blob = new Blob([cdgData[0], '\r\n', cdgData[1], '\r\n', cdgData[2], '\r\n'], { type: "text/plain;charset=utf-8" });
                     var filename = 'CDG_' + patientsDataTableRow.data().admissionnumber + '_' + cdgInfoTableRow.data()[0];
                     saveAs(blob, filename);
+                },
+                "error": function(jqXHR, exception) {
+
+                    if (jqXHR.status === 0) {
+                        alert('Not connect.\n Verify Network.');
+                    } else if (jqXHR.status == 401) {
+                        $("#ModalLogin").modal("show");
+                    } else if (jqXHR.status == 500) {
+                        alert(jqXHR.responseJSON.message);
+                    } else {
+                        alert('Uncaught Error.\n' + jqXHR.responseText);
+                    }
                 }
-            });      
+
+            });
         });
 
         //下载ECG数据，使用FileSaver.js插件
-        $(".cdgInfo tbody").on("click", "td.ecgDownload",function() {
+        $(".cdgInfo tbody").on("click", "td.ecgDownload", function() {
             var cdgInfoTable = $(".cdgInfo").DataTable();
             var tr = $(this).closest("tr");
             var cdgInfoTableRow = cdgInfoTable.row(tr);
@@ -238,14 +286,26 @@ $(document).ready(function() {
             $.ajax({
                 "url": "api/ecg",
                 "type": "GET",
-                "data": {"testId": cdgInfoTableRow.data()[0] },
+                "data": { "testId": cdgInfoTableRow.data()[0] },
                 "dataType": "json",
-                "success": function(data) {              
-                    var blob = new Blob([data.ecgData], {type: "text/plain;charset=utf-8"});
+                "success": function(data) {
+                    var blob = new Blob([data.ecgData], { type: "text/plain;charset=utf-8" });
                     var filename = 'ECG_' + patientsDataTableRow.data().admissionnumber + '_' + cdgInfoTableRow.data()[0];
                     saveAs(blob, filename);
+                },
+                "error": function(jqXHR, exception) {
+
+                    if (jqXHR.status === 0) {
+                        alert('Not connect.\n Verify Network.');
+                    } else if (jqXHR.status == 401) {
+                        $("#ModalLogin").modal("show");
+                    } else if (jqXHR.status == 500) {
+                        alert(jqXHR.responseJSON.message);
+                    } else {
+                        alert('Uncaught Error.\n' + jqXHR.responseText);
+                    }
                 }
-            });      
+            });
         });
 
 
@@ -281,6 +341,18 @@ $(document).ready(function() {
                         height: 640,
                     });
                     $("#ECGData").modal("show");
+                },
+                "error": function(jqXHR, exception) {
+                    $(".cdgInfo").css("cursor", "default");
+                    if (jqXHR.status === 0) {
+                        alert('Not connect.\n Verify Network.');
+                    } else if (jqXHR.status == 401) {
+                        $("#ModalLogin").modal("show");
+                    } else if (jqXHR.status == 500) {
+                        alert(jqXHR.responseJSON.message);
+                    } else {
+                        alert('Uncaught Error.\n' + jqXHR.responseText);
+                    }
                 }
 
             });
@@ -338,6 +410,18 @@ $(document).ready(function() {
                 $("#radiographyCase").html(data.radiography.replace(/；+/g, "<br>"));
                 $("#diagnosisCase").html(data.diagnosis.replace(/；+/g, "<br>"));
                 $("#patientCase").modal("show");
+            },
+            "error": function(jqXHR, exception) {
+                $(".cdgInfo").css("cursor", "default");
+                if (jqXHR.status === 0) {
+                    alert('Not connect.\n Verify Network.');
+                } else if (jqXHR.status == 401) {
+                    $("#ModalLogin").modal("show");
+                } else if (jqXHR.status == 500) {
+                    alert(jqXHR.responseJSON.message);
+                } else {
+                    alert('Uncaught Error.\n' + jqXHR.responseText);
+                }
             }
         });
     });
@@ -386,7 +470,7 @@ function generateCdgInfoTable(cdgInfo) {
             '<td>' + (cdgInfo[i].ecgTag == 1 ? '大致正常' : '可见异常') + '</td>' +
             '<td>' + '<a class="btn btn-success">下载</a>' + '</td>' +
             '<td>' + '<a class="btn btn-success">下载</a>' + '</td>'
-            '</tr>';
+        '</tr>';
     }
 
     return '<div class="row">' +

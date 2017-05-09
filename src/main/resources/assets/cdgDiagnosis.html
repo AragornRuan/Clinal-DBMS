@@ -61,6 +61,20 @@
                                     </ul>
                                 </li>
                             </ul>
+                            <ul class="nav navbar-nav navbar-right">
+                                <li class="noauth">
+                                    <a role="button" data-toggle="modal" data-target="#ModalLogin">登陆</a>
+                                </li>
+                                <li class="noauth">
+                                    <a role="button" data-toggle="modal" data-target="#ModalReg">注册</a>
+                                </li>
+                                <li class="auth">
+                                    <a id="loginuser"></a>
+                                </li>
+                                <li class="auth">
+                                    <a role="button" id="logoutbtn">注销登陆</a>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                     <div class="col-md-2"></div>
@@ -80,6 +94,78 @@
             </div>
         </div>
     </header>
+    <!--登陆界面-->
+    <div class="modal fade" id="ModalLogin" tabindex="-1" role="dialog" aria-labelledby="ModalLogin" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title"><strong>登录界面</strong></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="loginusername">用户名</label>
+                        <input type="text" name="username" class="form-control" id="loginusername" placeholder="请输入英文或数字组合">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginpassword">密码</label>
+                        <input type="password" name="password" class="form-control" id="loginpassword" placeholder="请输入英文和数字组合，长度不低于6位">
+                    </div>
+                    <span id="logininfo" class="text-danger"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="loginbtn">确认</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--注册界面-->
+    <div class="modal fade" id="ModalReg" tabindex="-1" role="dialog" aria-labelledby="ModalReg" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title"><strong>注册界面</strong></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="regusername">用户名</label>
+                        <input type="text" name="username" class="form-control" id="regusername" placeholder="请输入英文或数字组合">
+                    </div>
+                    <div class="form-group">
+                        <label for="regpassword">密码</label>
+                        <input type="password" name="password" class="form-control" id="regpassword" placeholder="请输入英文和数字组合，长度不低于6位">
+                    </div>
+                    <div class="form-group">
+                        <label for="password_confirmation">确认密码</label>
+                        <input type="password" name="password_confirmation" class="form-control" id="password_confirmation" placeholder="请再次输入">
+                    </div>
+                    <div class="form-group">
+                        <label for="realname">真实姓名</label>
+                        <input type="text" name="realname" class="form-control" id="realname" placeholder="请输入真实姓名">
+                    </div>
+                    <div class="form-group">
+                        <label for="phonenumber">手机号</label>
+                        <input type="text" name="phonenumber" class="form-control" id="phonenumber" placeholder="请输入手机号码">
+                    </div>
+                    <div class="form-group">
+                        <label for="regemail">电子邮箱</label>
+                        <input type="email" name="email" class="form-control" id="regemail" placeholder="请输入正确的电子邮箱">
+                    </div>
+                    <div class="form-group">
+                        <label for="invitvation">邀请码</label>
+                        <input type="invitvation" name="invitvation" class="form-control" id="invitvation" placeholder="请输入正确的邀请码">
+                    </div>
+                    <p id='regMessage' class="text-danger"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="regbtn">确认</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="regCancel">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="section">
         <div class="row">
             <div class="col-md-2">
@@ -135,6 +221,7 @@
     <script src="js/vendor/jquery.ui.widget.js"></script>
     <script src="js/jquery.fileupload.js"></script>
     <script src="js/jquery.iframe-transport.js"></script>
+    <script src="js/auth.js"></script>
 </body>
 
 </html>

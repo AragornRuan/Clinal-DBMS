@@ -1,9 +1,12 @@
 package com.scut.dbms.resources;
 
 import com.scut.dbms.api.ResponseMessage;
+import com.scut.dbms.auth.DefaultJwtCookiePrincipal;
 import com.scut.dbms.core.CDG;
 import com.scut.dbms.db.CDGDAO;
 import com.scut.dbms.error.ErrorCode;
+
+import io.dropwizard.auth.Auth;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -33,14 +36,14 @@ public class CDGResources {
 	
 	//根据testId获取cdg表数据
 	@GET
-	public CDG findByTestId(@QueryParam("testId") String testId) {
+	public CDG findByTestId(@Auth DefaultJwtCookiePrincipal principal, @QueryParam("testId") String testId) {
 		return cdgDAO.findByTestId(testId);
 	}
 	
 	//向cdg表中插入数据
 	@POST
 	@Path("/insert")
-	public ResponseMessage insert(@NotNull @Valid CDG cdg) {
+	public ResponseMessage insert(@Auth DefaultJwtCookiePrincipal principal, @NotNull @Valid CDG cdg) {
 		LOGGER.info("Inserting CDG in MySQL.");
 		cdgDAO.insert(cdg);
 		LOGGER.info("Inserted CDG in MySQL.");

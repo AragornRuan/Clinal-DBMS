@@ -12,10 +12,13 @@ import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.scut.dbms.auth.DefaultJwtCookiePrincipal;
 import com.scut.dbms.core.CDGInfo;
 import com.scut.dbms.core.Patients;
 import com.scut.dbms.db.CDGInfoDAO;
 import com.scut.dbms.db.PatientsDAO;
+
+import io.dropwizard.auth.Auth;
 
 /**
  * 对应于存储过程cdgQuery的API，只用在Matlab客户端
@@ -36,14 +39,14 @@ public class CDGInfoResources {
 	
 	//根据patientId，调用cdgQeruy存储过程
 	@GET
-	public List<CDGInfo> queryCDGInfo(@QueryParam("patientId") int patientId) {
+	public List<CDGInfo> queryCDGInfo(@Auth DefaultJwtCookiePrincipal principal, @QueryParam("patientId") int patientId) {
 		return cdgInfoDAO.queryCDGInfo(patientId);
 	}
 	
 	//根据住院号获取cdg表数据
 	@GET
 	@Path("/adnum")
-	public List<CDGInfo> queryCDGInfoByAdmissionnumber(@QueryParam("admissionnumber") String admissionnumber) {
+	public List<CDGInfo> queryCDGInfoByAdmissionnumber(@Auth DefaultJwtCookiePrincipal principal, @QueryParam("admissionnumber") String admissionnumber) {
 		Patients patients = patientsDAO.findByAdmissionnumber(admissionnumber);
 		return cdgInfoDAO.queryCDGInfo(patients.getId());
 	}

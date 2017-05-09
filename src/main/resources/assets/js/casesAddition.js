@@ -11,7 +11,7 @@ $(document).ready(function() {
     //点击添加按钮的回调函数
     $("#add").on("click", function() {
         $(this).css("cursor", "wait");
-        
+
         //获取病历信息
         var admissionnumber = $("#admissionnumber").val();
         var ecgNormal = document.getElementById("ecgNormal").checked;
@@ -64,7 +64,7 @@ $(document).ready(function() {
             //要将JSON object转成string形式，否则服务端无法处理JSON
             "data": JSON.stringify(patientsData),
             "dataType": "json",
-            
+
             //插入patients表成功后再将其余信息插入cases表
             "success": function(data) {
                 //如果插入失败则显示失败信息，错误码7代表病人已经存在，错误码的定义详见后端程序的ErrorCode类中。
@@ -109,16 +109,10 @@ $(document).ready(function() {
                         $("#add").css("cursor", "pointer");
                         if (jqXHR.status === 0) {
                             alert('Not connect.\n Verify Network.');
-                        } else if (jqXHR.status == 404) {
-                            alert('Requested page not found. [404]');
+                        } else if (jqXHR.status == 401) {
+                            $("#ModalLogin").modal("show");
                         } else if (jqXHR.status == 500) {
-                            alert('Internal Server Error [500].');
-                        } else if (exception === 'parsererror') {
-                            alert('Requested JSON parse failed.');
-                        } else if (exception === 'timeout') {
-                            alert('Time out error.');
-                        } else if (exception === 'abort') {
-                            alert('Ajax request aborted.');
+                            alert(jqXHR.responseJSON.message);
                         } else {
                             alert('Uncaught Error.\n' + jqXHR.responseText);
                         }
@@ -130,23 +124,17 @@ $(document).ready(function() {
                 $("#add").css("cursor", "pointer");
                 if (jqXHR.status === 0) {
                     alert('Not connect.\n Verify Network.');
-                } else if (jqXHR.status == 404) {
-                    alert('Requested page not found. [404]');
+                } else if (jqXHR.status == 401) {
+                    $("#ModalLogin").modal("show");
                 } else if (jqXHR.status == 500) {
-                    alert('Internal Server Error [500].');
-                } else if (exception === 'parsererror') {
-                    alert('Requested JSON parse failed.');
-                } else if (exception === 'timeout') {
-                    alert('Time out error.');
-                } else if (exception === 'abort') {
-                    alert('Ajax request aborted.');
+                    alert(jqXHR.responseJSON.message);
                 } else {
                     alert('Uncaught Error.\n' + jqXHR.responseText);
                 }
             }
         });
     });
-    
+
     //重置则刷新页面
     $("#reset").on("click", function() {
         location.reload();

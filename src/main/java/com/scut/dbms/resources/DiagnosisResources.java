@@ -12,8 +12,11 @@ import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.scut.dbms.auth.DefaultJwtCookiePrincipal;
 import com.scut.dbms.core.Diagnosis;
 import com.scut.dbms.db.DiagnosisDAO;
+
+import io.dropwizard.auth.Auth;
 
 /**
  * 对应予diagnosis存储过程的API
@@ -32,7 +35,7 @@ public class DiagnosisResources {
 	
 	//以住院号为数据参数，调用diagnosis存储过程，返回Diagnosis对象列表
 	@GET
-	public List<Diagnosis> queryDiagnosis(@QueryParam("admissionnumber") String admissionnumber) {
+	public List<Diagnosis> queryDiagnosis(@Auth DefaultJwtCookiePrincipal principal, @QueryParam("admissionnumber") String admissionnumber) {
 		return diagnosisDAO.queryDiagnosis(admissionnumber);
 	}
 }

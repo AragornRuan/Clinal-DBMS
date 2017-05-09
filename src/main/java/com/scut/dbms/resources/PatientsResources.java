@@ -46,7 +46,7 @@ public class PatientsResources {
     //根据id获取patients表数据
 	@GET
 	@Path("/id")
-	public Patients findById(@QueryParam("id") int id) {
+	public Patients findById(@Auth DefaultJwtCookiePrincipal principal, @QueryParam("id") int id) {
 		return patientsDAO.findById(id);
 	}
 
@@ -59,7 +59,7 @@ public class PatientsResources {
     //根据住院号获取patients表数据
 	@GET
 	@Path("/adnum")
-	public Patients findByAdmissionnumber(@QueryParam("admissionnumber") String admissionnumber) {
+	public Patients findByAdmissionnumber(@Auth DefaultJwtCookiePrincipal principal, @QueryParam("admissionnumber") String admissionnumber) {
 		Patients p = patientsDAO.findByAdmissionnumber(admissionnumber);
 		if (p == null) {
 			LOGGER.info("patients is not exist.");
@@ -75,7 +75,7 @@ public class PatientsResources {
 	 */
 	@POST
 	@Path("/insert")
-	public ResponseMessage insert(@NotNull @Valid Patients patients) {
+	public ResponseMessage insert(@Auth DefaultJwtCookiePrincipal principal, @NotNull @Valid Patients patients) {
 		Patients p = patientsDAO.findByAdmissionnumber(patients.getAdmissionnumber());
 		if (p == null) {
 			patientsDAO.insert(patients);
@@ -91,7 +91,7 @@ public class PatientsResources {
     //更新patients表数据
 	@POST
 	@Path("/update")
-	public ResponseMessage update(@NotNull @Valid Patients patients, @QueryParam("id") int id) {
+	public ResponseMessage update(@Auth DefaultJwtCookiePrincipal principal, @NotNull @Valid Patients patients, @QueryParam("id") int id) {
 		patientsDAO.update(patients, id);
 		return new UpdateResponseMessage(id, ErrorCode.SUCCESS, "Update patients success.");
 	}

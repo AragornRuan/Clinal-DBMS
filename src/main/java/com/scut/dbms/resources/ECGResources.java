@@ -3,6 +3,7 @@ package com.scut.dbms.resources;
 import com.scut.dbms.api.ResponseMessage;
 import com.scut.dbms.api.StoreCDGResponseMessage;
 import com.scut.dbms.api.UploadFileResponseMessage;
+import com.scut.dbms.auth.DefaultJwtCookiePrincipal;
 import com.scut.dbms.constants.FileConstants;
 import com.scut.dbms.core.CDG;
 import com.scut.dbms.core.ECG;
@@ -14,6 +15,7 @@ import com.scut.dbms.db.TimesDAO;
 import com.scut.dbms.error.ErrorCode;
 import com.scut.dbms.utils.FileOperations;
 
+import io.dropwizard.auth.Auth;
 import redis.clients.jedis.Jedis;
 
 import java.io.BufferedReader;
@@ -77,7 +79,7 @@ public class ECGResources {
  * @return        [description]
  */
 	@GET
-	public ECG findByTestId(@QueryParam("testId") String testId) {
+	public ECG findByTestId(@Auth DefaultJwtCookiePrincipal principal, @QueryParam("testId") String testId) {
 		return ecgDAO.findByTestId(testId);
 	}
 
@@ -88,7 +90,7 @@ public class ECGResources {
  */
 	@POST
 	@Path("/insert")
-	public ResponseMessage insert(@Valid @NotNull ECG ecg) {
+	public ResponseMessage insert(@Auth DefaultJwtCookiePrincipal principal, @Valid @NotNull ECG ecg) {
 
 		String testId = ecg.getTestId();
 		LOGGER.info("Inserting ECG {} into Redis.", testId);
@@ -105,7 +107,7 @@ public class ECGResources {
 
 	@POST
 	@Path("/learn")
-	public ResponseMessage learn(@Valid @NotNull ECG ecg) throws InterruptedException {
+	public ResponseMessage learn(@Auth DefaultJwtCookiePrincipal principal, @Valid @NotNull ECG ecg) throws InterruptedException {
 
 		String testId = ecg.getTestId();
 		LOGGER.info("Inserting ECG {} into Redis.", testId);
@@ -134,7 +136,7 @@ public class ECGResources {
 
 	@POST
 	@Path("/multilearn")
-	public ResponseMessage multiLearn(@Valid @NotNull ArrayList<ECG> ecgs) throws InterruptedException {
+	public ResponseMessage multiLearn(@Auth DefaultJwtCookiePrincipal principal, @Valid @NotNull ArrayList<ECG> ecgs) throws InterruptedException {
 
 		HashSet<String> testIds = new HashSet<String>();
 		LOGGER.info("Inserting ECGs into Redis and MySQL.");
@@ -168,7 +170,7 @@ public class ECGResources {
  */
 	@GET
 	@Path("/hadoop")
-	public ResponseMessage hadoop(@QueryParam("threadId") long threadId) throws IOException, InterruptedException {
+	public ResponseMessage hadoop(@Auth DefaultJwtCookiePrincipal principal, @QueryParam("threadId") long threadId) throws IOException, InterruptedException {
 
 		String inputDir = FileConstants.HADOOP_INPUT_DIR + threadId;
 		String outputDir = FileConstants.HADOOP_OUTPUT_DIR + threadId;
@@ -204,7 +206,7 @@ public class ECGResources {
 	@POST
 	@Path("/upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public ResponseMessage uploadFile(@FormDataParam("files") InputStream uploadedInputStream,
+	public ResponseMessage uploadFile(@Auth DefaultJwtCookiePrincipal principal, @FormDataParam("files") InputStream uploadedInputStream,
 			@FormDataParam("files") FormDataContentDisposition fileDetail) throws IOException {
 
         /**
